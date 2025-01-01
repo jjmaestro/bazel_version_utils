@@ -1,0 +1,29 @@
+name: Release
+on:
+  push:
+    tags:
+      - v*.*.*
+  workflow_call: # can be triggered from tag.yaml
+    inputs:
+      tag_name:
+        description: Release tag name (e.g. "v1.0.0")
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Release tag name (e.g. "v1.0.0")
+        required: true
+        type: string
+jobs:
+  release:
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@a841d62420f41a87a601fb331f3c2c2cc088506e
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    with:
+      tag_name: ${{ inputs.tag_name || github.ref_name }}
+      release_files: bazel_module_name-*.tar.gz
+      prerelease: false
+      draft: true

@@ -1,4 +1,4 @@
-name: Tag
+name: Tag and Release
 on:
   workflow_dispatch:
 jobs:
@@ -9,6 +9,7 @@ jobs:
     outputs:
       new-tag: ${{ steps.ccv.outputs.new-tag }}
       new-tag-version: ${{ steps.ccv.outputs.new-tag-version }}
+      new-tag-version-type: ${{ steps.ccv.outputs.new-tag-version-type }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -16,3 +17,20 @@ jobs:
       - name: Bump tag if necessary
         id: ccv
         uses: smlx/ccv@7318e2f25a52dcd550e75384b84983973251a1f8 # v0.10.0
+  # NOTE:
+  # The ccv step can add a tag but it doesn't "push" it to the repo so it
+  # doesn't trigger the release workflow. Thus, we explicitly call the workflow
+  # here and we gate it for major releases just to force a manual triggering of
+  # the release.
+  release:
+    needs: tag
+    uses: ./.github/workflows/release.yaml
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    with:
+      tag_name: ${{ needs.tag.outputs.new-tag-version }}
+    if: >
+      needs.tag.outputs.new-tag == 'true' &&
+      needs.tag.outputs.new-tag-version-type != 'major'

@@ -1,0 +1,15 @@
+{
+  "homepage": "<HOMEPAGE>",
+  "maintainers": [
+    {
+      "name": "<FULL_NAME>",
+      "email": "<EMAIL>",
+      "github": "<GH_USERNAME>"
+    }
+  ],
+  "repository": [
+    "github:<GH_REPO>"
+  ],
+  "versions": [],
+  "yanked_versions": {}
+}
