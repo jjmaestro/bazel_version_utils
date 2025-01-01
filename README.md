@@ -1,10 +1,10 @@
-# `<REPO>`
+# `<BAZEL_MODULE_NAME>`
 
 [![pre-commit](
     ../../actions/workflows/pre-commit.yaml/badge.svg
 )](../../actions/workflows/pre-commit.yaml)
 
-<ONE_LINE_DESCRIPTION>
+Bazel module to <DO_SOMETHING>.
 
 <MORE_INFO>
 

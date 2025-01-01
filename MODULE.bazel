@@ -1,0 +1,7 @@
+module(
+    name = "bazel_module_name",
+    version = "0.0.1",
+    bazel_compatibility = [">=7.1.0"],
+)
+
+bazel_dep(name = "rules_shell", version = "0.4.1", dev_dependency = True)

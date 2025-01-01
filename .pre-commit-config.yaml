@@ -21,6 +21,10 @@ repos:
     - id: check-yaml
     - id: detect-private-key
     - id: end-of-file-fixer
+      exclude: >-
+        (?x)^(
+          docs/.*\.md
+        )$
     - id: mixed-line-ending
     - id: trailing-whitespace
       args: ["--markdown-linebreak-ext=md"]
@@ -51,3 +55,11 @@ repos:
   rev: v1.7.7
   hooks:
     - id: actionlint
+- repo: https://github.com/keith/pre-commit-buildifier
+  rev: 7.3.1.1
+  hooks:
+    - id: buildifier
+      args: &args
+        - --warnings=all
+    - id: buildifier-lint
+      args: *args

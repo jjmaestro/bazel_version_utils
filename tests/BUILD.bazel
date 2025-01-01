@@ -1,0 +1,7 @@
+# NOTE:
+# dummy test so that bazel test //... never fails with error:
+# "ERROR: No test targets were found, yet testing was requested"
+sh_test(
+    name = "dummy_test",
+    srcs = ["dummy_test.sh"],
+)
