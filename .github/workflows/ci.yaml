@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches-ignore:
+      - wip/**
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+concurrency:
+  # Cancel previous actions from the same PR or branch except 'main' branch.
+  # For more info, see:
+  # https://docs.github.com/en/actions/using-jobs/using-concurrency
+  # https://docs.github.com/en/actions/learn-github-actions/contexts
+  group: >-
+    concurrency-group::${{ github.workflow }}::${{
+      github.event.pull_request.number > 0
+      && format('pr-{0}', github.event.pull_request.number)
+      || github.ref_name
+    }}${{
+      github.ref_name == 'main'
+      && format('::{0}', github.run_id)
+      || ''
+    }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+permissions:
+  contents: read
+jobs:
+  test:
+    uses: bazel-contrib/.github/.github/workflows/bazel.yaml@d8163053334bda95e01b01348d218441132276b2 # 2025-01-24
+    with:
+      bazel_test_command: bazel --bazelrc=.bazelrc.ci test //...
+      folders: |
+        [
+          "examples"
+        ]
+      exclude: |
+        [
+          {"bzlmodEnabled": false}
+        ]

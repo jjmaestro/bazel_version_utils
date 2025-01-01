@@ -3,6 +3,9 @@
 [![pre-commit](
     ../../actions/workflows/pre-commit.yaml/badge.svg
 )](../../actions/workflows/pre-commit.yaml)
+[![CI](
+    ../../actions/workflows/ci.yaml/badge.svg
+)](../../actions/workflows/ci.yaml)
 
 Bazel module to <DO_SOMETHING>.
 

@@ -1,0 +1,30 @@
+# /* vim: set filetype=sh : */
+
+# Declare all run commands that are loaded
+common --announce_rc
+
+try-import %workspace%/.bazelrc
+
+# Use relative paths where possible for concise CI output
+common --attempt_to_print_relative_paths
+
+# Prevent progress bars or similar
+common --curses=no
+
+# CI "terminals" support colour
+common --color=yes
+
+# Output timestamps for each command to aid debugging of CI runtime
+common --show_timestamps
+
+# Do not wrap any output
+common --terminal_columns=0
+
+# Output as much information in the CI log about failures as possible
+build --verbose_failures
+
+# Verbose output for test failures
+test --test_output=errors
+
+# Output as much information when a test exceeds a timeout
+test --test_verbose_timeout_warnings

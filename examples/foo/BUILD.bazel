@@ -1,0 +1,3 @@
+load(":foo.bzl", foo_examples_suite = "examples_suite")
+
+foo_examples_suite()
