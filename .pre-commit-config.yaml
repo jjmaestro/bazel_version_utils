@@ -54,3 +54,24 @@ repos:
     rev: v1.7.7
     hooks:
       - id: actionlint
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [--enable=all]
+  - repo: https://github.com/keith/pre-commit-buildifier
+    rev: 7.3.1.1
+    hooks:
+      - id: buildifier
+        args: &args
+          - --warnings=all
+      - id: buildifier-lint
+        args: *args
+  - repo: local
+    hooks:
+      - id: bazel-test-all
+        name: bazel-test-all
+        entry: .pre-commit-hooks/bazel-test-all.sh
+        language: system
+        pass_filenames: false
+        verbose: false

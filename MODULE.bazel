@@ -1,0 +1,5 @@
+module(
+    name = "module_name",
+    bazel_compatibility = [">=7.1.0"],
+    compatibility_level = 0,
+)
