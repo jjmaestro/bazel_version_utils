@@ -63,3 +63,34 @@ repos:
         - --warnings=all
     - id: buildifier-lint
       args: *args
+- repo: local
+  hooks:
+    - id: bazel-test-all
+      name: bazel-test-all
+      entry: >-
+        /usr/bin/env bash -c '
+          set -euo pipefail
+
+          MODULE_NAME="$(
+            grep -A1 -E "module\(" MODULE.bazel | xargs |
+            tr -d "," | awk "{print \$NF}"
+          )"
+
+          for dir in . docs tests e2e e2e/smoke examples; do
+            [ ! -f "$dir/MODULE.bazel" ] && continue
+
+            echo
+            if [ "$dir" == "." ]; then
+              echo "--- [$MODULE_NAME] --------------------------------"
+            else
+              echo "--- [$MODULE_NAME/$dir] --------------------------------"
+            fi
+            echo
+
+            cd "$dir"
+            bazel test //...
+          done
+        '
+      language: script
+      pass_filenames: false
+      verbose: true

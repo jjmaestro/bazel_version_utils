@@ -18,5 +18,9 @@ common --attempt_to_print_relative_paths
 # Disable warning transitive module versions
 common --check_direct_dependencies=off
 
+# Force remote java
+common --java_runtime_version=remotejdk_21
+common --tool_java_runtime_version=remotejdk_21
+
 # User-specific .bazelrc
 try-import %workspace%/.bazelrc.user
