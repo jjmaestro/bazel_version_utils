@@ -1,0 +1,29 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+package(default_visibility = [
+    "//tests/version:__subpackages__",
+    "//version:__subpackages__",
+])
+
+bzl_library(
+    name = "utils",
+    srcs = ["utils.bzl"],
+)
+
+bzl_library(
+    name = "comparing",
+    srcs = ["comparing.bzl"],
+    deps = [
+        ":utils",
+    ],
+)
+
+bzl_library(
+    name = "bumping",
+    srcs = ["bumping.bzl"],
+)
+
+bzl_library(
+    name = "truncating",
+    srcs = ["truncating.bzl"],
+)

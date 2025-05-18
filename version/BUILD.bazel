@@ -1,0 +1,18 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "semver.bzl",
+])
+
+bzl_library(
+    name = "semver",
+    srcs = ["semver.bzl"],
+    deps = [
+        "//version/internal:bumping",
+        "//version/internal:comparing",
+        "//version/internal:truncating",
+        "//version/internal:utils",
+    ],
+)

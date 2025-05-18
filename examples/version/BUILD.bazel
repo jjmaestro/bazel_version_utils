@@ -1,0 +1,3 @@
+load(":semver.bzl", semver_examples_suite = "examples_suite")
+
+semver_examples_suite()

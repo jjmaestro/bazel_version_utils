@@ -32,9 +32,12 @@ jobs:
       bazel_test_command: bazel --bazelrc=.bazelrc.ci test //...
       folders: |
         [
+          ".",
+          "docs",
           "examples"
         ]
       exclude: |
         [
+          {"folder": "docs", "bazelVersion": "8.0.0"},
           {"bzlmodEnabled": false}
         ]
