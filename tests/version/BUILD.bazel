@@ -1,0 +1,9 @@
+load(":semver.bzl", semver_test_suite = "test_suite")
+load(":semver_parsing.bzl", semver_parsing_test_suite = "test_suite")
+load(":semver_specification.bzl", semver_specification_test_suite = "test_suite")
+
+semver_parsing_test_suite()
+
+semver_specification_test_suite()
+
+semver_test_suite()

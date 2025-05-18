@@ -1,0 +1,3 @@
+load(":utils.bzl", utils_test_suite = "test_suite")
+
+utils_test_suite()

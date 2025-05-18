@@ -47,6 +47,10 @@ repos:
   hooks:
     - id: markdownlint
       args: ["--fix"]
+      exclude: >-
+        (?x)^(
+          docs/version/.*\.md
+        )$
 - repo: https://github.com/mpalmer/action-validator
   rev: v0.6.0
   hooks:
