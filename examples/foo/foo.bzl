@@ -2,7 +2,7 @@
 
 load("@bazel_skylib//lib:unittest.bzl", "unittest")
 
-# load("@module_name//foo:foo.bzl", "foo")
+# load("@version_utils//foo:foo.bzl", "foo")
 load("//:suite.bzl", _examples_suite = "test_suite")
 
 def _foo_examples_impl(ctx):

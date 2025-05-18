@@ -5,7 +5,7 @@ set -o errexit -o nounset -o pipefail
 # Argument provided by reusable workflow caller, see
 # https://github.com/bazel-contrib/.github/blob/d197a6427c5435ac22e56e33340dff912bc9334e/.github/workflows/release_ruleset.yaml#L72
 TAG="${1}"
-GH_REPO_NAME="${2-bazel_module_name}"
+GH_REPO_NAME="${2-bazel_version_utils}"
 
 VERSION="${TAG#v}"
 
@@ -27,7 +27,7 @@ To start using this module:
 * Add the module as a dependency in your \`MODULE.bazel\` with:
 
 \`\`\`starlark
-bazel_dep(name = "module_name", version = "${VERSION}")
+bazel_dep(name = "version_utils", version = "${VERSION}")
 \`\`\`
 
 [Bzlmod]: https://bazel.build/external/migration

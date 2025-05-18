@@ -1,5 +1,5 @@
 module(
-    name = "module_name",
+    name = "version_utils",
     bazel_compatibility = [">=7.1.0"],
     compatibility_level = 0,
 )

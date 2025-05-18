@@ -1,14 +1,14 @@
 {
-  "homepage": "<HOMEPAGE>",
+  "homepage": "https://github.com/jjmaestro/bazel_version_utils",
   "maintainers": [
     {
-      "name": "<FULL_NAME>",
-      "email": "<EMAIL>",
-      "github": "<GH_USERNAME>"
+      "name": "Javier Maestro",
+      "email": "jjmaestro@ieee.org",
+      "github": "jjmaestro"
     }
   ],
   "repository": [
-    "github:<GH_REPO>"
+    "github:jjmaestro/bazel_version_utils"
   ],
   "versions": [],
   "yanked_versions": {}
