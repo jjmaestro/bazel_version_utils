@@ -1,12 +1,10 @@
-# `<BAZEL_MODULE_NAME>`
+# `version_utils`
 
 [![pre-commit](
     ../../actions/workflows/pre-commit.yaml/badge.svg
 )](../../actions/workflows/pre-commit.yaml)
 
-Bazel module to <DO_SOMETHING>.
-
-<MORE_INFO>
+Bazel module to work with version schemes.
 
 ## 💡 Contributing
 

@@ -1,1 +1,1 @@
-# 📄 `<BAZEL_MODULE_NAME>`
+# 📄 `version_utils`
