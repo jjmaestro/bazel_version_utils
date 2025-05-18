@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    id="version_utils_logo"
+    viewBox="0 0 1024 1024">
+  <defs>
+    <style>
+      .bazel_green_l1 { fill: #76d276; }
+      .bazel_green_l2 { fill: #42a047; }
+      .bazel_green_d1 { fill: #00701a; }
+      .bazel_green_d2 { fill: #014300; }
+
+      .number {
+        font-size: 300px;
+        font-family: monospace;
+        fill: white;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+    </style>
+  </defs>
+
+  <rect
+    id="box_1"
+    class="bazel_green_l2"
+    x="112" y="72" width="395" height="395" rx="60" ry="60" />
+  <text x="309.5" y="269.5" id="number_1" class="number">1</text>
+
+  <rect
+    id="box_dot"
+    class="bazel_green_d1"
+    x="112" y="507" width="395" height="395" rx="60" ry="60" />
+  <text x="309.5" y="704.5" id="number_dot" class="number">.</text>
+
+  <rect
+    id="box_0"
+    class="bazel_green_l2"
+    x="547" y="289.5" width="395" height="395" rx="60" ry="60" />
+  <text x="744.5" y="487" id="number_0" class="number">0</text>
+
+  <rect
+    id="box_g"
+    fill="gray"
+    x="547" y="724.5" width="395" height="192.5" rx="60" ry="60" />
+</svg>
