@@ -3,6 +3,7 @@
 load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
 load("//tests:mock.bzl", Mock = "mock")
 load("//tests:suite.bzl", _test_suite = "test_suite")
+load("//tests/version/internal:utils.bzl", "WILDCARDS")
 load("//version:semver.bzl", SemVer = "semver")
 
 def _is_valid_normal_version_number_impl(ctx):
@@ -17,6 +18,11 @@ def _is_valid_normal_version_number_impl(ctx):
     # int / valid numeric string
     for value in (123, "123"):
         res = SemVer.__test__._is_valid_normal_version_number(value)
+        asserts.true(env, res)
+
+    # wildcards
+    for value in WILDCARDS:
+        res = SemVer.__test__._is_valid_normal_version_number(value, wildcards = WILDCARDS)
         asserts.true(env, res)
 
     # invalid int
@@ -136,16 +142,21 @@ def _parse_impl(ctx):
 
     # valid partial versions and valid full version
     params = [
-        ("1.2", True, "1.2"),
-        ("1.2.3", False, None),
-        ("1.2.3-alpha.1+build-4.5", False, None),
+        ("1.2", True, "1.2", None),
+        ("1.x", False, "1", WILDCARDS),
+        ("1.*", False, "1", WILDCARDS),
+        ("1.2.*", False, "1.2", WILDCARDS),
+        ("1.2.3", False, None, None),
+        ("1.2.3-alpha.1+build-4.5", False, None, None),
     ]
 
-    for version, partial, expected in params:
+    for version, partial, expected, wildcards in params:
+        wildcards = wildcards or ()
         expected = version if expected == None else expected
-        res = SemVer.parse(version, partial = partial)
+        res = SemVer.parse(version, partial = partial, wildcards = wildcards)
+        expected_partial = partial or bool(wildcards)
         asserts.equals(env, expected, res.to_str())
-        asserts.equals(env, partial, res._partial)
+        asserts.equals(env, expected_partial, res._partial)
 
     return unittest.end(env)
 
@@ -432,6 +443,21 @@ def _parse_re_impl(ctx):
         ("1.2-rc.1", ("1", "2", None, ("rc", "1"), ())),
         ("1.2-rc.1+b01", ("1", "2", None, ("rc", "1"), ("b01",))),
         ("1.2.3-rc.1+b01", ("1", "2", "3", ("rc", "1"), ("b01",))),
+    ]
+
+    params += [
+        (w, (w, None, None, (), ()))
+        for w in WILDCARDS[:-1]
+    ]
+
+    params += [
+        ("1.%s" % w, ("1", w, None, (), ()))
+        for w in WILDCARDS[:-1]
+    ]
+
+    params += [
+        ("1.2.%s" % w, ("1", "2", w, (), ()))
+        for w in WILDCARDS[:-1]
     ]
 
     for version, parts in params:

@@ -196,7 +196,7 @@ Checks whether the given value is a `SemVer` `struct`.
 ## semver.new
 
 <pre>
-semver.new(<a href="#semver.new-major">major</a>, <a href="#semver.new-minor">minor</a>, <a href="#semver.new-patch">patch</a>, <a href="#semver.new-prerelease">prerelease</a>, <a href="#semver.new-build">build</a>, <a href="#semver.new-partial">partial</a>, <a href="#semver.new-_fail">_fail</a>)
+semver.new(<a href="#semver.new-major">major</a>, <a href="#semver.new-minor">minor</a>, <a href="#semver.new-patch">patch</a>, <a href="#semver.new-prerelease">prerelease</a>, <a href="#semver.new-build">build</a>, <a href="#semver.new-partial">partial</a>, <a href="#semver.new-wildcards">wildcards</a>, <a href="#semver.new-_fail">_fail</a>)
 </pre>
 
 Constructs a `SemVer` `struct`.
@@ -212,6 +212,7 @@ Constructs a `SemVer` `struct`.
 | <a id="semver.new-prerelease"></a>prerelease |  SemVer prerelease (e.g. `("beta", "1")`).   |  `()` |
 | <a id="semver.new-build"></a>build |  SemVer build metadata (e.g. `("build", "001")`).   |  `()` |
 | <a id="semver.new-partial"></a>partial |  Whether to accept partial versions (e.g. `1` or `1.0` instead of `1.0.0`).   |  `False` |
+| <a id="semver.new-wildcards"></a>wildcards |  Strings allowed as wildcards in place of a normal version number field (e.g. if `wildcards` is set to `("x", "*")` then `"1.x"` or `"1.1.*"` is equivalent to `"1"` or `"1.1"` with `partial = True`, respectively).   |  `()` |
 | <a id="semver.new-_fail"></a>_fail |  **[TESTING]** Mock of the fail() function   |  `<built-in function fail>` |
 
 **RETURNS**
@@ -224,7 +225,7 @@ A `SemVer` `struct`.
 ## semver.parse
 
 <pre>
-semver.parse(<a href="#semver.parse-version">version</a>, <a href="#semver.parse-partial">partial</a>, <a href="#semver.parse-_fail">_fail</a>)
+semver.parse(<a href="#semver.parse-version">version</a>, <a href="#semver.parse-partial">partial</a>, <a href="#semver.parse-wildcards">wildcards</a>, <a href="#semver.parse-_fail">_fail</a>)
 </pre>
 
 Parses a version string into a `SemVer` `struct`.
@@ -236,6 +237,7 @@ Parses a version string into a `SemVer` `struct`.
 | :------------- | :------------- | :------------- |
 | <a id="semver.parse-version"></a>version |  a semantic version string (e.g. `"1.5.2-rc.1-b20"`)   |  none |
 | <a id="semver.parse-partial"></a>partial |  whether to accept partial versions (e.g. `"1"` or `"1.0"` instead of `"1.0.0"`)   |  `False` |
+| <a id="semver.parse-wildcards"></a>wildcards |  wildcards allowed in the normal version number fields, if any (e.g. if `wildcards` is set to `("x", "*")` then `"1.x"` or `"1.1.*"` is equivalent to `"1"` or `"1.1"` with `partial = True`, respectively).   |  `()` |
 | <a id="semver.parse-_fail"></a>_fail |  **[TESTING]** mock of the fail() function   |  `<built-in function fail>` |
 
 **RETURNS**

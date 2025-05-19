@@ -2,8 +2,10 @@
 # version utils
 """
 
-def _coerce(value, partial = False, _fail = fail):
-    if value == None and partial:
+def _coerce(value, partial = False, wildcards = (), _fail = fail):
+    if value in wildcards:
+        return None
+    elif value == None and partial:
         return None
     elif type(value) == "int":
         return value

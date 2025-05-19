@@ -216,7 +216,7 @@ def _parse_re(version, _fail = fail):
 
     return major, minor, patch, prerelease, build
 
-def _is_valid_normal_version_number(value, partial = False):
+def _is_valid_normal_version_number(value, partial = False, wildcards = ()):
     """
     Checks if the value is a valid SemVer normal version number.
 
@@ -226,18 +226,23 @@ def _is_valid_normal_version_number(value, partial = False):
     > non-negative integers, and MUST NOT contain leading zeroes. X is the
     > major version, Y is the minor version, and Z is the patch version.
 
-    This method also allows `None` if `partial` is True (for incomplete
-    versions like "1.2").
+    This method also allows:
+    * `None` if `partial` is True (for incomplete versions like "1.2").
+    * wildcard strings (e.g. "x", "*") if listed in `wildcards`.
 
     Args:
         value (string): The value to validate.
         partial (bool): Whether to accept `None` as a valid normal version
             number.
+        wildcards (tuple[string]): Strings allowed as wildcards in place of a
+            normal version number field (e.g. if `wildcards` is set to `("x",
+            "*")` then `"x"` or `"*"` is a valid normal version number field).
 
     Returns:
         `True if the value is a valid normal version number, `False` otherwise.
     """
     return (
+        (value in wildcards) or
         (value == None and partial) or
         (utils.is_uint(value) and not utils.has_leading_zero(value))
     )
@@ -308,13 +313,14 @@ def _validate(
         prerelease,
         build,
         partial = False,
+        wildcards = (),
         allow_empty = False,
         _fail = fail):
-    if not _is_valid_normal_version_number(major):
+    if not _is_valid_normal_version_number(major, wildcards = wildcards):
         return _fail("Invalid semantic version major value: %r" % major)
 
     for value in (minor, patch):
-        if not _is_valid_normal_version_number(value, partial):
+        if not _is_valid_normal_version_number(value, partial, wildcards):
             msg = "Invalid semantic version minor/patch value: %r"
             return _fail(msg % value)
 
@@ -333,9 +339,9 @@ def _validate(
             if not validate(value, allow_empty = allow_empty):
                 return _fail(msg % str(identifiers))
 
-    major = utils.coerce(major, partial = False)
-    minor = utils.coerce(minor, partial = partial)
-    patch = utils.coerce(patch, partial = partial)
+    major = utils.coerce(major, partial = False, wildcards = wildcards)
+    minor = utils.coerce(minor, partial = partial, wildcards = wildcards)
+    patch = utils.coerce(patch, partial = partial, wildcards = wildcards)
 
     partial = any([f == None for f in (major, minor, patch)])
 
@@ -378,6 +384,7 @@ def _new(
         prerelease = (),
         build = (),
         partial = False,
+        wildcards = (),
         _fail = fail):
     """
     Constructs a `SemVer` `struct`.
@@ -390,6 +397,10 @@ def _new(
         build (tuple[string]): SemVer build metadata (e.g. `("build", "001")`).
         partial (bool): Whether to accept partial versions (e.g. `1` or `1.0`
             instead of `1.0.0`).
+        wildcards (tuple[string]): Strings allowed as wildcards in place of a
+            normal version number field (e.g. if `wildcards` is set to `("x",
+            "*")` then `"1.x"` or `"1.1.*"` is equivalent to `"1"` or `"1.1"`
+            with `partial = True`, respectively).
         _fail (function): **[TESTING]** Mock of the fail() function
 
     Returns:
@@ -402,6 +413,7 @@ def _new(
         prerelease,
         build,
         partial = partial,
+        wildcards = wildcards,
         _fail = _fail,
     )
 
@@ -444,6 +456,7 @@ def _new(
 def _parse(
         version,
         partial = False,
+        wildcards = (),
         _fail = fail):
     """
     Parses a version string into a `SemVer` `struct`.
@@ -452,6 +465,10 @@ def _parse(
         version (string): a semantic version string (e.g. `"1.5.2-rc.1-b20"`)
         partial (bool): whether to accept partial versions (e.g. `"1"` or
             `"1.0"` instead of `"1.0.0"`)
+        wildcards (tuple[string]): wildcards allowed in the normal version
+            number fields, if any (e.g. if `wildcards` is set to `("x", "*")`
+            then `"1.x"` or `"1.1.*"` is equivalent to `"1"` or `"1.1"` with
+            `partial = True`, respectively).
         _fail (function): **[TESTING]** mock of the fail() function
 
     Returns:
@@ -468,6 +485,7 @@ def _parse(
 
     return _new(
         partial = partial,
+        wildcards = wildcards,
         _fail = _fail,
         *res
     )
