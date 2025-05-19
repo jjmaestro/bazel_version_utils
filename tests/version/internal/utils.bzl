@@ -7,6 +7,8 @@ load("//tests:suite.bzl", _test_suite = "test_suite")
 # buildifier: disable=bzl-visibility
 load("//version/internal:utils.bzl", "utils")
 
+WILDCARDS = ("*", "x", "X", None)
+
 def _coerce_impl(ctx):
     env = unittest.begin(ctx)
 
@@ -25,6 +27,11 @@ def _coerce_impl(ctx):
     for partial, expected in [(False, "Can't coerce value: None"), (True, None)]:
         res = utils.coerce(value, partial = partial, _fail = Mock.fail)
         asserts.equals(env, expected, res)
+
+    # wildcards
+    for value in WILDCARDS:
+        res = utils.coerce(value, wildcards = WILDCARDS)
+        asserts.equals(env, None, res)
 
     # something else
     value = (1, 2)
