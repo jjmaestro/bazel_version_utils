@@ -245,6 +245,26 @@ Parses a version string into a `SemVer` `struct`.
 A `SemVer` `struct`.
 
 
+<a id="semver.parse_spec"></a>
+
+## semver.parse_spec
+
+<pre>
+semver.parse_spec(<a href="#semver.parse_spec-version">version</a>, <a href="#semver.parse_spec-wildcards">wildcards</a>, <a href="#semver.parse_spec-_fail">_fail</a>)
+</pre>
+
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="semver.parse_spec-version"></a>version |  <p align="center"> - </p>   |  none |
+| <a id="semver.parse_spec-wildcards"></a>wildcards |  <p align="center"> - </p>   |  none |
+| <a id="semver.parse_spec-_fail"></a>_fail |  <p align="center"> - </p>   |  `<built-in function fail>` |
+
+
 <a id="semver.sorted"></a>
 
 ## semver.sorted

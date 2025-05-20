@@ -490,6 +490,46 @@ def _parse(
         *res
     )
 
+def _parse_spec(version, wildcards, _fail = fail):
+    parts = _parse_re(version, _fail = _fail)
+
+    if _fail != fail and type(parts) == "string":
+        # testing: _fail returned an error string
+        return parts
+
+    major, minor, patch, prerelease, build = parts
+
+    empty_values = wildcards + [None]
+
+    parts = _validate(
+        major,
+        minor,
+        patch,
+        prerelease,
+        build,
+        wildcards = empty_values,
+        allow_empty = True,
+        _fail = _fail,
+    )
+
+    if _fail != fail and type(parts) == "string":
+        # testing: _fail returned an error string
+        return parts
+
+    major, minor, patch, prerelease, build, _ = parts
+
+    major = None if major in empty_values else major
+    minor = None if minor in empty_values else minor
+    patch = None if patch in empty_values else patch
+
+    if (prerelease or build) and all([p == None for p in (major, minor, patch)]):
+        return _fail("Invalid version in spec expression: %r" % version)
+
+    prerelease = () if prerelease == ("",) else prerelease
+    build = () if build == ("",) else build
+
+    return major, minor, patch, prerelease, build
+
 def _compare(v1, v2, _parse = _parse):
     """
     Compares two semantic versions.
@@ -541,6 +581,7 @@ def _is(value):
 semver = struct(
     new = _new,
     parse = _parse,
+    parse_spec = _parse_spec,
     compare = _compare,
     sorted = _sorted,
     is_ = _is,

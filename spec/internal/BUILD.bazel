@@ -1,0 +1,46 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+package(default_visibility = [
+    "//spec:__pkg__",
+    "//tests/spec/internal:__pkg__",
+])
+
+exports_files([
+    "clauses.bzl",
+    "npm.bzl",
+    "simple.bzl",
+    "utils.bzl",
+])
+
+bzl_library(
+    name = "utils",
+    srcs = ["utils.bzl"],
+)
+
+bzl_library(
+    name = "clauses",
+    srcs = ["clauses.bzl"],
+    deps = [
+        ":utils",
+        "//version:semver",
+    ],
+)
+
+bzl_library(
+    name = "simple",
+    srcs = ["simple.bzl"],
+    deps = [
+        ":clauses",
+        "//version:semver",
+    ],
+)
+
+bzl_library(
+    name = "npm",
+    srcs = ["npm.bzl"],
+    deps = [
+        ":clauses",
+        ":simple",
+        "//version:semver",
+    ],
+)

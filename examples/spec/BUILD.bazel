@@ -1,0 +1,3 @@
+load(":spec.bzl", spec_examples_suite = "examples_suite")
+
+spec_examples_suite()

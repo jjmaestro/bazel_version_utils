@@ -14,10 +14,14 @@
     ../../actions/workflows/ci.yaml/badge.svg
 )](../../actions/workflows/ci.yaml)
 
-Bazel module to work with version schemes.
+Bazel module to work with version schemes and version requirement
+specifications.
 
-It currently supports [semantic versions]. Ideally, it will eventually expand
-to support additional versions (e.g. [Debian versions]).
+It currently supports [semantic versions], as well as semantic version
+requirement specifications such as [NPM-style `node-semver` `Ranges` syntax].
+
+Ideally, it will eventually expand to support additional versions (e.g. [Debian
+versions] and [Debian version requirements]).
 
 ## 📦 Install
 
@@ -166,11 +170,81 @@ print(truncated.to_str())
 
 </details>
 
+### `spec`: Version Requirement Specifications
+
+This package provides a `spec` extension to work with version requirement
+specifications.
+
+It currently supports two syntaxes:
+
+* [`SYNTAX.SIMPLE`]: an easy, natural requirement syntax somewhat inspired by
+  Python's [PEP 440] (e.g. `>=0.1.1,<0.3.0`). This is the default.
+* [`SYNTAX.NPM`]: the [NPM-style `node-semver` `Ranges` syntax] (e.g. `>=0.1.1
+  <0.1.3 || 2.x`).
+
+To begin, create a new `Spec` `struct`:
+
+```starlark
+load("@version_utils//spec:spec.bzl", "spec")
+
+simple = spec.new(">=0.1.0,<0.4.0")
+
+npm = spec.new(">=0.1.0 <0.3.0", syntax = spec.SYNTAX.NPM)
+```
+
+The `Spec` `struct` has three methods:
+
+* `spec.match`: checks whether the given version satisfies the version
+  requirement specification:
+
+```starlark
+version = semver.parse("0.2.0")
+
+print(simple.match(version))
+# True
+
+version = semver.parse("0.4.0")
+
+print(simple.match(version))
+# False
+```
+
+* `spec.filter`: filters the versions in the iterable of versions that match
+  the version requirements:
+
+```starlark
+versions = [semver.parse("0.%d.0" % i) for i in range(6)]
+
+for v in simple.filter(versions):
+    print(v.to_str())
+# 0.1.0
+# 0.2.0
+# 0.3.0
+
+for v in npm.filter(versions):
+    print(v.to_str())
+# 0.1.0
+# 0.2.0
+```
+
+* `spec.select`: selects the highest version from an iterable of versions that
+  matches the version requirements:
+
+```starlark
+versions = [semver.parse("0.%d.0" % i) for i in range(6)]
+
+v = npm.select(versions)
+
+print(v.to_str())
+# 0.2.0
+```
+
 ## 📄 [Docs]
 
 For more details about each component, check the documentation:
 
 * [`version/semver`]: for [semantic versions].
+* [`spec/spec`]: for version requirement specifications.
 
 ## 💡 Contributing
 
@@ -185,12 +259,18 @@ and thanks to its original author, [@rbarrois]!
 [Bzlmod]: https://bazel.build/external/migration
 [CONTRIBUTING.md]: CONTRIBUTING.md
 [Debian versions]: https://www.debian.org/doc/debian-policy/ch-controlfields.html#version
+[Debian version requirements]: https://www.debian.org/doc/debian-policy/ch-relationships.html#syntax-of-relationship-fields
 [Docs]: docs/README.md
+[NPM-style `node-semver` `Ranges` syntax]: https://github.com/npm/node-semver?tab=readme-ov-file#ranges
+[PEP 440]: https://peps.python.org/pep-0440/
 [PRs]: ../../pulls
+[`SYNTAX.NPM`]: docs/spec/internal/npm.md
+[`SYNTAX.SIMPLE`]: docs/spec/internal/simple.md
 [`archive_override`]: https://bazel.build/rules/lib/globals/module#archive_override
 [issues]: ../../issues
 [non-registry override]: https://bazel.build/external/module#non-registry_overrides
 [python-semanticversion]: https://github.com/rbarrois/python-semanticversion
 [@rbarrois]: https://github.com/rbarrois
 [semantic versions]: https://semver.org
+[`spec/spec`]: docs/spec/spec.md
 [`version/semver`]: docs/version/semver.md
