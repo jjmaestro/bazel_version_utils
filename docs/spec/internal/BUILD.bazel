@@ -1,0 +1,23 @@
+load("@aspect_bazel_lib//lib:docs.bzl", "stardoc_with_diff_test", "update_docs")
+
+package(default_visibility = ["//docs:__subpackages__"])
+
+stardoc_with_diff_test(
+    name = "clauses",
+    bzl_library_target = "//spec/internal:clauses",
+    renderer = "//docs:renderer",
+)
+
+stardoc_with_diff_test(
+    name = "simple",
+    bzl_library_target = "//spec/internal:simple",
+    renderer = "//docs:renderer",
+)
+
+stardoc_with_diff_test(
+    name = "npm",
+    bzl_library_target = "//spec/internal:npm",
+    renderer = "//docs:renderer",
+)
+
+update_docs(name = "update")

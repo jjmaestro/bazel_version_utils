@@ -1,0 +1,9 @@
+load(":spec.bzl", spec_test_suite = "test_suite")
+load(":spec_npm.bzl", spec_npm_test_suite = "test_suite")
+load(":spec_simple.bzl", spec_simple_test_suite = "test_suite")
+
+spec_test_suite()
+
+spec_npm_test_suite()
+
+spec_simple_test_suite()

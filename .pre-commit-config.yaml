@@ -50,6 +50,7 @@ repos:
       exclude: >-
         (?x)^(
           docs/version/.*\.md
+          |docs/spec/.*\.md
         )$
 - repo: https://github.com/mpalmer/action-validator
   rev: v0.6.0

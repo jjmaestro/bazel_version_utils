@@ -1,0 +1,3 @@
+load(":clauses.bzl", clauses_test_suite = "test_suite")
+
+clauses_test_suite()
