@@ -103,6 +103,30 @@ def _expand_impl(ctx):
         ("^0.x", ">=0.0.0 <1.0.0"),
     ])
 
+    # With whitespace
+    wexpansions = dict([
+        # NOTE:
+        # We want to be able to parse these because npm-server does parse them
+        # even though these don't strictly adhere to the NPM grammar.
+        ("1.2  -  2.3.4    ||   >   1.2.3", ">=1.2.0 <=2.3.4 || >1.2.3"),
+        (">= 1.2.3", ">=1.2.3"),
+        (">=   1.2.3", ">=1.2.3"),
+        ("   >=1.2.3 <2.0.0    ", ">=1.2.3 <2.0.0"),
+        (">= 1.2.3 <  2.0.0", ">=1.2.3 <2.0.0"),
+        (">=1.2.3 < 2.0.0", ">=1.2.3 <2.0.0"),
+        (">= 1.2.3 < 2.0.0", ">=1.2.3 <2.0.0"),
+        (">=  1.2.3 <    2.0.0", ">=1.2.3 <2.0.0"),
+        ("   >=1.2.3 <2.0.0    ", ">=1.2.3 <2.0.0"),
+        ("1.2.7 ||    >=1.2.9  <2.0.0 ", "1.2.7 || >=1.2.9 <2.0.0"),
+        ("1.2.7 ||    >= 1.2.9   < 2.0.0 ", "1.2.7 || >=1.2.9 <2.0.0"),
+        ("^ 1.2.3", ">=1.2.3 <2.0.0"),
+        ("^   1.2.3", ">=1.2.3 <2.0.0"),
+        ("~ 1.2.3", ">=1.2.3 <1.3.0"),
+        ("~    1.2.3", ">=1.2.3 <1.3.0"),
+    ])
+
+    expansions |= wexpansions
+
     for source, expanded in expansions.items():
         s1 = Spec.new(source, syntax = Spec.SYNTAX.NPM)
         s2 = Spec.new(expanded, syntax = Spec.SYNTAX.NPM)
