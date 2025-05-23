@@ -40,6 +40,7 @@ def _invalid_spec_impl(ctx):
         # is valid, >=1.2.3+b42 isn’t.
         ">=1.2.3+b42",
         "<0.1.2-rc1.3-14.15+build.2012-01-01.11h34",
+        "< = 1.0.0",
     ]
 
     for expression in invalid_specs:
@@ -70,6 +71,17 @@ def _valid_spec_impl(ctx):
         ("~=0.1.2", 'AllOf(Range(">=", "0.1.2"), Range("<", "0.2.0"))'),
         (">0.1.0,<=0.1.5", 'AllOf(Range(">", "0.1.0"), Range("<=", "0.1.5"))'),
     ]
+
+    valid_specs_whitespace = [
+        (" *  ", ">=0.0.0"),
+        ("== 0.1.0", "==0.1.0"),
+        ("= 0.1.0", "==0.1.0"),
+        ("< 0.1 ", "<0.1.0"),
+        ("== 0.1.2+b42 ", "==0.1.2+b42"),
+        (">0.1.0, <=0.1.5", 'AllOf(Range(">", "0.1.0"), Range("<=", "0.1.5"))'),
+    ]
+
+    valid_specs += valid_specs_whitespace
 
     for expression, clause in valid_specs:
         spec = Spec.new(expression)

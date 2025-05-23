@@ -18,6 +18,45 @@ def _make_operators(operators, op_aliases = None):
     # operator length
     return sorted(operators, key = lambda x: (len(x), x), reverse = True)
 
+def _has_op_with_spaces(block, ops):
+    """
+    Check if there's more than one operator separated by spaces.
+
+    These are invalid blocks that need special detection to avoid
+    turning them into valid blocks by normalizing the spaces in them
+    (e.g. ' > = 1.0.0' could turn into '>= 1.0.0' after normalize)
+    """
+    chars = block.strip().elems()
+
+    for i, c1 in enumerate(chars):
+        if c1 == " ":
+            continue
+
+        for op in ops:
+            if len(op) < 2:
+                continue
+
+            # Build a fragment (a non-space chars up-to the length of
+            # the operator)
+            fragment = ""
+            non_space_chars = 0
+            for c2 in chars[i:]:
+                if non_space_chars == len(op):
+                    break
+
+                fragment += c2
+
+                if c2 != " ":
+                    non_space_chars += 1
+
+            # Check if the fragment is a potential conflict (a fragment
+            # that's not an operator but it would become one if we
+            # remove the spaces)
+            if fragment != op and fragment.replace(" ", "") == op:
+                return True
+
+    return False
+
 def _parse_block(self, expression, npm_mode = False, _fail = fail):
     if not expression:
         return _fail("Empty spec")
@@ -271,7 +310,29 @@ def _simple_parser_new(_fail = fail):
         A `NpmParser` `struct`.
     """
 
+    def normalize(expression):
+        def normalize_block(block):
+            if not " " in block:
+                return block
+
+            operators = [op for op in self.OPERATORS if op]
+
+            if _has_op_with_spaces(block, operators):
+                return block
+
+            return "".join([
+                sub_block.strip()
+                for sub_block in block.split(" ")
+            ])
+
+        return JOINER.join([
+            normalize_block(block)
+            for block in expression.split(JOINER)
+        ])
+
     def parse(expression):
+        expression = normalize(expression)
+
         clause = Always.new()
 
         for block in expression.split(JOINER):
@@ -300,6 +361,7 @@ def _simple_parser_new(_fail = fail):
         OP_ALIASES = OP_ALIASES,
         OPERATORS = _make_operators(_OP, OP_ALIASES),
         parse = parse,
+        normalize = normalize,
         _range = Range.new,
     )
 
@@ -327,5 +389,6 @@ simpleparser = struct(
     __internal__ = struct(
         _parse_block = _parse_block,
         _make_operators = _make_operators,
+        _has_op_with_spaces = _has_op_with_spaces,
     ),
 )

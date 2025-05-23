@@ -40,7 +40,57 @@ def _npm_parser_new(_fail = fail):
         A `NpmParser` `struct`.
     """
 
+    def normalize(expression):
+        def normalize_block(block):
+            if not " " in block:
+                return block
+
+            operators = [op for op in self.OPERATORS if op]
+
+            if SimpleParser.__internal__._has_op_with_spaces(block, operators):
+                return block
+
+            # First, split in sub-blocks with no spaces in them
+            sub_blocks = [c for c in block.split(" ") if c]
+
+            # Then, expand the sub-blocks splitting by non-empty operators
+            expanded = []
+            for sub_block in sub_blocks:
+                matched = False
+                for op in operators:
+                    if not matched and op in sub_block:
+                        matched = True
+                        expanded += [p for p in sub_block.partition(op) if p]
+
+                if not matched:
+                    expanded.append(sub_block)
+
+            # Then, create op-version blocks
+            part_op, part_version = "", ""
+            op_version_blocks = []
+            for part in expanded:
+                if part in operators:
+                    part_op = part
+                else:
+                    part_version = part
+
+                    op_version_blocks.append("%s%s" % (part_op, part_version))
+                    part_op, part_version = "", ""
+
+            # Finally, space-join the op-version blocks
+            return " ".join(op_version_blocks)
+
+        return (" %s " % JOINER).join([
+            HYPHEN.join([
+                normalize_block(block)
+                for block in group.split(HYPHEN)
+            ])
+            for group in expression.split(JOINER)
+        ])
+
     def parse(expression):
+        expression = normalize(expression)
+
         result = Never.new()
         groups = expression.split(JOINER)
 
@@ -131,6 +181,7 @@ def _npm_parser_new(_fail = fail):
         OP_ALIASES = OP_ALIASES,
         OPERATORS = SimpleParser.__internal__._make_operators(_OP, OP_ALIASES),
         parse = parse,
+        normalize = normalize,
         _range = _range,
     )
 

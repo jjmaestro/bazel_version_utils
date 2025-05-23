@@ -174,6 +174,7 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
     else:
         return _fail("Unknown syntax: %s" % syntax)
 
+    expression = parser.normalize(expression)
     clause = parser.parse(expression)
 
     if _fail != fail and type(clause) == "string":
