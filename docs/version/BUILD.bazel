@@ -8,4 +8,10 @@ stardoc_with_diff_test(
     renderer = "//:renderer",
 )
 
+stardoc_with_diff_test(
+    name = "version",
+    bzl_library_target = "@version_utils//version:version",
+    renderer = "//:renderer",
+)
+
 update_docs(name = "update")

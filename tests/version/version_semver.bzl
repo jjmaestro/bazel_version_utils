@@ -4,7 +4,10 @@ load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
 load("//tests:mock.bzl", Mock = "mock")
 load("//tests:suite.bzl", _test_suite = "test_suite")
 load("//tests/version/internal:utils.bzl", "WILDCARDS")
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:version.bzl", Version = "version")
+
+# buildifier: disable=name-conventions
+SemVer = Version.new(Version.SCHEME.SEMVER)
 
 def _is_valid_normal_version_number_impl(ctx):
     env = unittest.begin(ctx)
