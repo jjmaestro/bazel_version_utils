@@ -15,17 +15,25 @@ def _next_major(self):
         1.0.1-5 bumps to 2.0.0
         1.1.0 bumps to 2.0.0
     """
-    if self.prerelease and self.minor == 0 and self.patch == 0:
+    if (
+        self.prerelease and
+        self.minor == 0 and
+        (not self.has("patch") or self.patch == 0)
+    ):
         new_major = self.major
     else:
         new_major = self.major + 1
 
-    return self._new(
+    kwargs = dict(
         major = new_major,
         minor = 0,
-        patch = 0,
         partial = self._partial,
     )
+
+    if self.has("patch"):
+        kwargs["patch"] = 0
+
+    return self._new(**kwargs)
 
 def _next_minor(self):
     """
@@ -38,17 +46,24 @@ def _next_minor(self):
         1.2.0-5 bumps to 1.2.0
         1.2.1 bumps to 1.3.0
     """
-    if self.prerelease and self.patch == 0:
-        new_minor = self.minor
+    if (
+        self.prerelease and
+        (not self.has("patch") or self.patch == 0)
+    ):
+        new_minor = self.minor or 0
     else:
         new_minor = self.minor + 1
 
-    return self._new(
+    kwargs = dict(
         major = self.major,
         minor = new_minor,
-        patch = 0,
         partial = self._partial,
     )
+
+    if self.has("patch"):
+        kwargs["patch"] = 0
+
+    return self._new(**kwargs)
 
 def _next_patch(self):
     """
@@ -83,7 +98,7 @@ def _bump(self, level, _fail = fail):
     """
     Returns a new version, bumped at the selected level.
     """
-    if level not in _BUMP_LEVELS:
+    if level not in _BUMP_LEVELS or not self.has(level):
         return _fail("Invalid bump level `%s`." % level)
 
     return _BUMP_LEVELS[level](self)

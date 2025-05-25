@@ -7,8 +7,9 @@
 Bazel module to work with version schemes and version requirement
 specifications.
 
-It currently supports [semantic versions], as well as semantic version
-requirement specifications such as [NPM-style `node-semver` `Ranges` syntax].
+It currently supports [semantic versions] and [Postgres versions], as well as
+semantic version requirement specifications such as [NPM-style `node-semver`
+`Ranges` syntax].
 
 Ideally, it will eventually expand to support additional versions (e.g. [Debian
 versions] and [Debian version requirements].
@@ -17,8 +18,11 @@ versions] and [Debian version requirements].
 
 ### `version`
 
-This package provides extensions to work with different version schemes.
-Currently, it only supports one version scheme: [semantic versions].
+This package provides extensions to work with different version schemes. It
+currently supports two version schemes: [semantic versions] and [Postgres
+versions].
+
+#### example: semantic versions
 
 A semantic version can be created by parsing a string:
 
@@ -197,6 +201,7 @@ print(v.to_str())
 For more details about each component, check the documentation:
 
 * [`version/semver`]: for [semantic versions].
+* [`version/pgver`]: for [Postgres versions].
 * [`spec/spec`]: for version requirement specifications.
 
 ## 💡 Contributing
@@ -215,6 +220,7 @@ and thanks to its original author, [@rbarrois]!
 [Docs]: docs/README.md
 [NPM-style `node-semver` `Ranges` syntax]: https://github.com/npm/node-semver?tab=readme-ov-file#ranges
 [PEP 440]: https://peps.python.org/pep-0440/
+[Postgres versions]: https://www.postgresql.org/support/versioning/
 [PRs]: ../../pulls
 [`SYNTAX.NPM`]: docs/spec/internal/npm.md
 [`SYNTAX.SIMPLE`]: docs/spec/internal/simple.md
@@ -224,3 +230,4 @@ and thanks to its original author, [@rbarrois]!
 [semantic versions]: https://semver.org
 [`spec/spec`]: docs/spec/spec.md
 [`version/semver`]: docs/version/semver.md
+[`version/pgver`]: docs/version/pgver.md

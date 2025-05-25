@@ -3,20 +3,28 @@
 """
 
 def _truncate_major(self):
-    return self._new(
+    kwargs = dict(
         major = self.major,
         minor = None if self._partial else 0,
-        patch = None if self._partial else 0,
         partial = self._partial,
     )
 
+    if self.has("patch"):
+        kwargs["patch"] = None if self._partial else 0
+
+    return self._new(**kwargs)
+
 def _truncate_minor(self):
-    return self._new(
+    kwargs = dict(
         major = self.major,
-        minor = self.minor,
-        patch = None if self._partial else 0,
+        minor = 0 if self.minor == None and self.prerelease != () else self.minor,
         partial = self._partial,
     )
+
+    if self.has("patch"):
+        kwargs["patch"] = None if self._partial else 0
+
+    return self._new(**kwargs)
 
 def _truncate_patch(self):
     return self._new(
@@ -27,13 +35,17 @@ def _truncate_patch(self):
     )
 
 def _truncate_prerelease(self):
-    return self._new(
+    kwargs = dict(
         major = self.major,
         minor = self.minor,
-        patch = self.patch,
         prerelease = self.prerelease,
         partial = self._partial,
     )
+
+    if self.has("patch"):
+        kwargs["patch"] = self.patch
+
+    return self._new(**kwargs)
 
 def _truncate_build(self):
     return self
@@ -50,7 +62,7 @@ def _truncate(self, level, _fail = fail):
     """
     Returns a new version, truncated up to the selected level.
     """
-    if level not in _TRUNCATE_LEVELS:
+    if level not in _TRUNCATE_LEVELS or not self.has(level):
         return _fail("Invalid truncation level `%s`." % level)
 
     return _TRUNCATE_LEVELS[level](self)

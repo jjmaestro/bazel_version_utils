@@ -150,6 +150,8 @@ load("//version/internal:utils.bzl", "utils")
 
 __CLASS__ = "SemVer"
 
+_FIELDS = ("major", "minor", "patch", "prerelease", "build")
+
 def _parse_identifiers(identifiers):
     if type(identifiers) == "string":
         parsed = tuple([p for p in identifiers.split(".")])
@@ -446,6 +448,7 @@ def _new(
 
     self_dict |= dict(
         to_str = lambda: _to_str(self),
+        has = lambda level: _has(level),
     )
 
     self_dict |= comparing.new(self_dict)
@@ -579,6 +582,19 @@ def _is(value):
     """
     return utils.is_(value, __CLASS__)
 
+def _has(field):
+    """
+    Checks whether the given field is a valid `SemVer` `struct` field.
+
+    Args:
+        field: The field name.
+
+    Returns:
+        `True` if the value is a valid `SemVer` struct field, `False`
+        otherwise.
+    """
+    return field in _FIELDS
+
 semver = struct(
     new = _new,
     parse = _parse,
@@ -586,9 +602,11 @@ semver = struct(
     compare = _compare,
     sorted = _sorted,
     is_ = _is,
+    has = _has,
     __internal__ = struct(
         _parse_re = _parse_re,
         _validate = _validate,
+        _has = _has,
     ),
     __test__ = struct(
         _is_valid_normal_version_number = _is_valid_normal_version_number,

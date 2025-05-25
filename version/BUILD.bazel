@@ -4,12 +4,25 @@ package(default_visibility = ["//visibility:public"])
 
 exports_files([
     "semver.bzl",
+    "pgver.bzl",
 ])
 
 bzl_library(
     name = "semver",
     srcs = ["semver.bzl"],
     deps = [
+        "//version/internal:bumping",
+        "//version/internal:comparing",
+        "//version/internal:truncating",
+        "//version/internal:utils",
+    ],
+)
+
+bzl_library(
+    name = "pgver",
+    srcs = ["pgver.bzl"],
+    deps = [
+        ":semver",
         "//version/internal:bumping",
         "//version/internal:comparing",
         "//version/internal:truncating",

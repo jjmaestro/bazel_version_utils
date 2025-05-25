@@ -8,4 +8,10 @@ stardoc_with_diff_test(
     renderer = "//docs:renderer",
 )
 
+stardoc_with_diff_test(
+    name = "pgver",
+    bzl_library_target = "//version:pgver",
+    renderer = "//docs:renderer",
+)
+
 update_docs(name = "update")
