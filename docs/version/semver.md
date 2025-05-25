@@ -169,6 +169,29 @@ An integer indicating the relative order of `v1` vs `v2`:
   - `1` if `v1 > v2`
 
 
+<a id="semver.has"></a>
+
+## semver.has
+
+<pre>
+semver.has(<a href="#semver.has-field">field</a>)
+</pre>
+
+Checks whether the given field is a valid `SemVer` `struct` field.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="semver.has-field"></a>field |  The field name.   |  none |
+
+**RETURNS**
+
+`True` if the value is a valid `SemVer` struct field, `False`
+  otherwise.
+
+
 <a id="semver.is_"></a>
 
 ## semver.is_

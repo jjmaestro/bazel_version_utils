@@ -1,3 +1,6 @@
+load(":pgver.bzl", pgver_examples_suite = "examples_suite")
 load(":semver.bzl", semver_examples_suite = "examples_suite")
+
+pgver_examples_suite()
 
 semver_examples_suite()

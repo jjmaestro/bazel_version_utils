@@ -9,6 +9,12 @@ stardoc_with_diff_test(
 )
 
 stardoc_with_diff_test(
+    name = "pgver",
+    bzl_library_target = "@version_utils//version:pgver",
+    renderer = "//:renderer",
+)
+
+stardoc_with_diff_test(
     name = "version",
     bzl_library_target = "@version_utils//version:version",
     renderer = "//:renderer",

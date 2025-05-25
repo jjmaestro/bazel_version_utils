@@ -3,6 +3,7 @@
 ## `version/`
 
 * [`semver`]: for [semantic versions].
+* [`pgver`]: for [Postgres versions].
 
 ## `spec/`
 
@@ -20,9 +21,11 @@
 
 [NPM-style `node-semver` `Ranges` syntax]: https://github.com/npm/node-semver?tab=readme-ov-file#ranges
 [PEP 440]: https://peps.python.org/pep-0440/
+[Postgres versions]: https://www.postgresql.org/support/versioning/
 [`SYNTAX.NPM`]: spec/internal/npm.md
 [`SYNTAX.SIMPLE`]: spec/internal/simple.md
 [`clauses`]: spec/internal/clauses.md
+[`pgver`]: version/pgver.md
 [semantic versions]: https://semver.org
 [`semver`]: version/semver.md
 [`spec`]: spec/spec.md
