@@ -47,10 +47,10 @@ parse_test = unittest.make(_parse_impl)
 def _to_str_impl(ctx):
     env = unittest.begin(ctx)
 
-    versions = ["16", "16.0", "16beta1"]
+    versions = ["16", "16+b42", "16.0", "16beta1"]
 
     for idx, expected in enumerate(versions):
-        res = PgVer.parse(expected, partial = idx == 0).to_str()
+        res = PgVer.parse(expected, partial = idx < 2).to_str()
         asserts.equals(env, expected, res)
 
     return unittest.end(env)
@@ -108,6 +108,7 @@ _ORDERED_VERSIONS = [
     "17.1",
     "17.2",
     "17",
+    "18.1+build.1",
     "18",
 ]
 
@@ -278,18 +279,18 @@ def _parse_re_impl(ctx):
     env = unittest.begin(ctx)
 
     params = [
-        ("16", ("16", None, ())),
-        ("16.2", ("16", "2", ())),
-        ("16rc1", ("16", None, ("rc", "1"))),
+        ("16", ("16", None, (), ())),
+        ("16.2", ("16", "2", (), ())),
+        ("16rc1", ("16", None, ("rc", "1"), ())),
     ]
 
     params += [
-        (w, (w, None, ()))
+        (w, (w, None, (), ()))
         for w in WILDCARDS[:-1]
     ]
 
     params += [
-        ("16.%s" % w, ("16", w, ()))
+        ("16.%s" % w, ("16", w, (), ()))
         for w in WILDCARDS[:-1]
     ]
 

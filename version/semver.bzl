@@ -604,6 +604,7 @@ semver = struct(
     is_ = _is,
     has = _has,
     __internal__ = struct(
+        _parse_identifiers = _parse_identifiers,
         _parse_re = _parse_re,
         _validate = _validate,
         _has = _has,

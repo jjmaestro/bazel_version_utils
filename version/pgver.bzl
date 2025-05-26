@@ -145,9 +145,9 @@ load("//version/internal:utils.bzl", "utils")
 
 __CLASS__ = "PgVer"
 
-_FIELDS = ("major", "minor", "prerelease")
+_FIELDS = ("major", "minor", "prerelease", "build")
 
-def _parse_re(version, _fail = fail):
+def _parse_re(version, strict = False, _fail = fail):
     r"""
     Parses a Postgres version string into a tuple.
 
@@ -158,12 +158,18 @@ def _parse_re(version, _fail = fail):
     ^
     (?P<major>\d+)
     ((?:\.(?P<minor>\d+))? | (?P<prerelease>(alpha|beta|rc)\d+)?)
+    (?:\+(?P<build>[0-9a-zA-Z.-]*))?
     $
     ```
+
+    NOTE:
+    Even if Postgres versions don't support build metadata, the default is to
+    parse it. For strict Postgres versions, use `strict = True`.
 
     Args:
         version (string): a Postgres version string (e.g. `"16.2"`,
             `"17beta1"`, etc).
+        strict (bool): `True` doesn't allow build metadata.
         _fail (function): **[TESTING]** mock of the `fail()` function.
 
     Returns:
@@ -176,6 +182,12 @@ def _parse_re(version, _fail = fail):
     if version == "":
         return _fail("Empty version string")
 
+    # split and parse build metadata
+    parts = version.split("+", 1)
+    version = parts[0]
+    build = parts[1] if len(parts) > 1 else ()
+    build = SemVer.__internal__._parse_identifiers(build)
+
     prerelease_name = None
     for p in ("alpha", "beta", "rc"):
         if p in version:
@@ -183,26 +195,31 @@ def _parse_re(version, _fail = fail):
 
     if prerelease_name:
         minor = None
-        major, _, prerelease_count = version.partition(prerelease_name)
+        major, _, prerelease_num = version.partition(prerelease_name)
 
-        prerelease = (prerelease_name, prerelease_count)
+        prerelease = (prerelease_name, prerelease_num)
 
-        if not utils.is_uint(prerelease_count):
+        if not utils.is_uint(prerelease_num):
             msg = "Invalid Postgres prerelease: %s"
             _fail(msg % "".join(prerelease))
     else:
         prerelease = ()
         major, _, minor = version.partition(".")
 
-    return major or None, minor or None, prerelease
+    if strict and build:
+        _fail("Invalid Postgres strict version: %s" % version)
+
+    return major or None, minor or None, prerelease, build
 
 def _validate(
         major,
         minor,
         prerelease,
+        build,
         partial = False,
         wildcards = (),
         allow_empty = False,
+        strict = False,
         _fail = fail):
     # NOTE:
     # When calling semver.validate we mock fail so that if the validation
@@ -215,7 +232,7 @@ def _validate(
         minor = minor,
         patch = None,
         prerelease = prerelease,
-        build = (),
+        build = build,
         partial = True,
         wildcards = wildcards,
         allow_empty = allow_empty,
@@ -229,7 +246,10 @@ def _validate(
         res = res.replace("minor/patch", "minor")
         return _fail(res)
 
-    major, minor, _, prerelease, _, _ = res
+    major, minor, _, prerelease, build, _ = res
+
+    if strict and build:
+        return _fail("Invalid Postgres version")
 
     has_major = major != None
     has_prerelease = prerelease != ()
@@ -241,21 +261,21 @@ def _validate(
 
     # Case 1: major + minor version (e.g., 16.0)
     if has_major and has_minor and not has_prerelease:
-        return major, minor, prerelease, False
+        return major, minor, prerelease, build, False
 
     # Case 2: major + prerelease (e.g. 16alpha1)
     if has_major and not has_minor and has_prerelease:
-        return major, 0, prerelease, False
+        return major, 0, prerelease, build, False
 
     # if partials are allowed, it's easier to check for the valid cases:
     if allowed_partial:
         # Case 3: major only (e.g. 16 or 16 and wildcards, 16.*, 16.x, etc)
         if has_major and not has_minor and not has_prerelease:
-            return major, minor, prerelease, allowed_partial
+            return major, minor, prerelease, build, allowed_partial
 
         # Case 4: Wildcard-only version (e.g. *)
         if not has_major and not has_minor and not has_prerelease:
-            return major, minor, prerelease, allowed_partial
+            return major, minor, prerelease, build, allowed_partial
 
     # If none matched, it's invalid
     return _fail("Invalid Postgres version")
@@ -274,6 +294,9 @@ def _to_str(self):
 
         Note that, to support partial versions, the `minor` and `prerelease`
         components are included only if not `None` or `()`, respectively.
+
+        Also, if the version is not strict and there's metadata, it'll be
+        added similar to SemVer versions.
     """
     version = "%d" % self.major
 
@@ -282,14 +305,19 @@ def _to_str(self):
     elif self.prerelease != ():
         version += "".join([str(p) for p in self.prerelease])
 
+    if self.build:
+        version += "+%s" % ".".join([str(p) for p in self.build])
+
     return version
 
 def _new(
         major,
         minor = None,
         prerelease = (),
+        build = (),
         partial = False,
         wildcards = (),
+        strict = False,
         _fail = fail):
     """
     Constructs a `PgVer` `struct`.
@@ -299,12 +327,14 @@ def _new(
         minor (string): Postgres minor version (e.g. `"2"`)
         prerelease (tuple[string]): Postgres prerelease version (e.g. `("beta",
             "1")`)
+        build (tuple[string]): build metadata (e.g. `("build", "001")`).
         partial (bool): whether to accept partial versions (e.g. `"16"` instead
             of `"16.0"`)
         wildcards (tuple[string]): Strings allowed as wildcards in place of a
             normal version number field (e.g. if `wildcards` is set to `("x",
             "*")` then `"16.x"` or `"16.*"` is equivalent to `"16"` with
             `partial = True`).
+        strict (bool): `True` doesn't allow build metadata.
         _fail (function): **[TESTING]** mock of the `fail()` function
 
     Returns:
@@ -314,8 +344,10 @@ def _new(
         major,
         minor,
         prerelease,
+        build,
         partial = partial,
         wildcards = wildcards,
+        strict = strict,
         _fail = _fail,
     )
 
@@ -323,11 +355,11 @@ def _new(
         # testing: _fail returned an error string
         return fields
 
-    major, minor, prerelease, partial = fields
+    major, minor, prerelease, build, partial = fields
     fields = fields[:-1]
 
-    __cmp_key__ = comparing.make_precedence_key(fields)
-    __sort_key__ = __cmp_key__
+    __cmp_key__ = comparing.make_precedence_key(fields[:-1])  # w/o build
+    __sort_key__ = comparing.make_precedence_key(fields)  # with build
 
     self_dict = dict(
         __class__ = __CLASS__,
@@ -339,7 +371,7 @@ def _new(
         major = major,
         minor = minor,
         prerelease = prerelease,
-        build = (),
+        build = build,
     )
 
     self = struct(**self_dict)
@@ -359,6 +391,7 @@ def _parse(
         version,
         partial = False,
         wildcards = (),
+        strict = False,
         _fail = fail):
     """
     Parses a Postgres version string into a `PgVer` `struct`.
@@ -372,6 +405,7 @@ def _parse(
             normal version number field (e.g. if `wildcards` is set to `("x",
             "*")` then `"16.x"` or `"16.*"` is equivalent to `"16"` with
             `partial = True`).
+        strict (bool): `True` doesn't allow build metadata.
         _fail (function): **[TESTING]** Mock of the `fail()` function
 
     Returns:
@@ -380,7 +414,7 @@ def _parse(
     if _is(version):
         return version
 
-    res = _parse_re(version, _fail = _fail)
+    res = _parse_re(version, strict = strict, _fail = _fail)
 
     if _fail != fail and type(res) == "string":
         # testing: _fail returned an error string
@@ -389,6 +423,7 @@ def _parse(
     return _new(
         partial = partial,
         wildcards = wildcards,
+        strict = strict,
         _fail = _fail,
         *res
     )

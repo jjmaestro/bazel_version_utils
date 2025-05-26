@@ -212,7 +212,7 @@ Checks whether the given value is a `PgVer` `struct`.
 ## pgver.new
 
 <pre>
-pgver.new(<a href="#pgver.new-major">major</a>, <a href="#pgver.new-minor">minor</a>, <a href="#pgver.new-prerelease">prerelease</a>, <a href="#pgver.new-partial">partial</a>, <a href="#pgver.new-wildcards">wildcards</a>, <a href="#pgver.new-_fail">_fail</a>)
+pgver.new(<a href="#pgver.new-major">major</a>, <a href="#pgver.new-minor">minor</a>, <a href="#pgver.new-prerelease">prerelease</a>, <a href="#pgver.new-build">build</a>, <a href="#pgver.new-partial">partial</a>, <a href="#pgver.new-wildcards">wildcards</a>, <a href="#pgver.new-strict">strict</a>, <a href="#pgver.new-_fail">_fail</a>)
 </pre>
 
 Constructs a `PgVer` `struct`.
@@ -225,8 +225,10 @@ Constructs a `PgVer` `struct`.
 | <a id="pgver.new-major"></a>major |  Postgres major version (e.g. `"16"`)   |  none |
 | <a id="pgver.new-minor"></a>minor |  Postgres minor version (e.g. `"2"`)   |  `None` |
 | <a id="pgver.new-prerelease"></a>prerelease |  Postgres prerelease version (e.g. `("beta", "1")`)   |  `()` |
+| <a id="pgver.new-build"></a>build |  build metadata (e.g. `("build", "001")`).   |  `()` |
 | <a id="pgver.new-partial"></a>partial |  whether to accept partial versions (e.g. `"16"` instead of `"16.0"`)   |  `False` |
 | <a id="pgver.new-wildcards"></a>wildcards |  Strings allowed as wildcards in place of a normal version number field (e.g. if `wildcards` is set to `("x", "*")` then `"16.x"` or `"16.*"` is equivalent to `"16"` with `partial = True`).   |  `()` |
+| <a id="pgver.new-strict"></a>strict |  `True` doesn't allow build metadata.   |  `False` |
 | <a id="pgver.new-_fail"></a>_fail |  **[TESTING]** mock of the `fail()` function   |  `<built-in function fail>` |
 
 **RETURNS**
@@ -239,7 +241,7 @@ A `PgVer` `struct`.
 ## pgver.parse
 
 <pre>
-pgver.parse(<a href="#pgver.parse-version">version</a>, <a href="#pgver.parse-partial">partial</a>, <a href="#pgver.parse-wildcards">wildcards</a>, <a href="#pgver.parse-_fail">_fail</a>)
+pgver.parse(<a href="#pgver.parse-version">version</a>, <a href="#pgver.parse-partial">partial</a>, <a href="#pgver.parse-wildcards">wildcards</a>, <a href="#pgver.parse-strict">strict</a>, <a href="#pgver.parse-_fail">_fail</a>)
 </pre>
 
 Parses a Postgres version string into a `PgVer` `struct`.
@@ -252,6 +254,7 @@ Parses a Postgres version string into a `PgVer` `struct`.
 | <a id="pgver.parse-version"></a>version |  A Postgres version string (e.g. `"16.2"`, `"17beta1"`, etc).   |  none |
 | <a id="pgver.parse-partial"></a>partial |  Whether to accept partial versions (e.g. `"16"` instead of `"16.0"`)   |  `False` |
 | <a id="pgver.parse-wildcards"></a>wildcards |  Strings allowed as wildcards in place of a normal version number field (e.g. if `wildcards` is set to `("x", "*")` then `"16.x"` or `"16.*"` is equivalent to `"16"` with `partial = True`).   |  `()` |
+| <a id="pgver.parse-strict"></a>strict |  `True` doesn't allow build metadata.   |  `False` |
 | <a id="pgver.parse-_fail"></a>_fail |  **[TESTING]** Mock of the `fail()` function   |  `<built-in function fail>` |
 
 **RETURNS**
