@@ -5,13 +5,14 @@
 See [NPM-style `node-semver` `Ranges` syntax].
 
 [NPM-style `node-semver` `Ranges` syntax]: https://github.com/npm/node-semver?tab=readme-ov-file#ranges
+[`Versions.VERSIONS`]: ../../../version/versions.bzl
 
 <a id="npmparser.new"></a>
 
 ## npmparser.new
 
 <pre>
-npmparser.new(<a href="#npmparser.new-_fail">_fail</a>)
+npmparser.new(<a href="#npmparser.new-cls_name">cls_name</a>, <a href="#npmparser.new-_fail">_fail</a>)
 </pre>
 
 Constructs a `NpmParser` `struct`.
@@ -33,6 +34,7 @@ requirement specification with `match(version)`.
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
+| <a id="npmparser.new-cls_name"></a>cls_name |  the version class to use (one of [`Versions.VERSIONS`]).   |  `"semver"` |
 | <a id="npmparser.new-_fail"></a>_fail |  **[TESTING]** Mock of the `fail()` function.   |  `<built-in function fail>` |
 
 **RETURNS**

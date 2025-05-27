@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 exports_files([
     "semver.bzl",
     "pgver.bzl",
+    "versions.bzl",
 ])
 
 bzl_library(
@@ -27,5 +28,13 @@ bzl_library(
         "//version/internal:comparing",
         "//version/internal:truncating",
         "//version/internal:utils",
+    ],
+)
+
+bzl_library(
+    name = "versions",
+    srcs = ["versions.bzl"],
+    deps = [
+        ":semver",
     ],
 )

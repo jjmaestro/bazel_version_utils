@@ -82,17 +82,23 @@ print(v.to_str())
 [`spec/internal/simple`]: docs/spec/internal/simple.md
 [`SYNTAX.SIMPLE`]: internal/simple.md
 [`SYNTAX.NPM`]: internal/npm.md
+[`Versions.VERSIONS`]: ../../version/versions.bzl
 """
 
 load("//spec/internal:npm.bzl", NPMParser = "npmparser")
 load("//spec/internal:simple.bzl", SimpleParser = "simpleparser")
+load("//version:versions.bzl", Versions = "versions")
 
 SYNTAX = struct(
     SIMPLE = "simple",
     NPM = "npm",
 )
 
-def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
+def _new(
+        expression,
+        syntax = SYNTAX.SIMPLE,
+        cls_name = Versions.VERSIONS.SEMVER,
+        _fail = fail):
     """
     Constructs a `Spec` `struct` from the given version requirements specification.
 
@@ -115,6 +121,8 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
         syntax (SYNTAX): The `SYNTAX` of the specification. One of
             [`SYNTAX.SIMPLE`] (e.g. `>=0.1.1,<0.3.0`) or [`SYNTAX.NPM`] (e.g.
             `>=0.1.1 <0.1.3 || 2.x`). Defaults to `SYNTAX.SIMPLE`.
+        cls_name (string): the version class to use (one of
+            [`Versions.VERSIONS`]).
         _fail (function): **[TESTING]** Mock of the `fail()` function.
 
     Returns:
@@ -166,9 +174,9 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
         return "<%s:%s %r>" % (self.__class__, self.syntax.upper(), self.expression)
 
     if syntax == SYNTAX.SIMPLE:
-        parser = SimpleParser.new(_fail = _fail)
+        parser = SimpleParser.new(cls_name = cls_name, _fail = _fail)
     elif syntax == SYNTAX.NPM:
-        parser = NPMParser.new(_fail = _fail)
+        parser = NPMParser.new(cls_name = cls_name, _fail = _fail)
     else:
         return _fail("Unknown syntax: %s" % syntax)
 

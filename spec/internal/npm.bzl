@@ -4,21 +4,23 @@
 See [NPM-style `node-semver` `Ranges` syntax].
 
 [NPM-style `node-semver` `Ranges` syntax]: https://github.com/npm/node-semver?tab=readme-ov-file#ranges
+[`Versions.VERSIONS`]: ../../../version/versions.bzl
 """
 
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:versions.bzl", Versions = "versions")
 load(":clauses.bzl", AllOf = "allof", Never = "never", Range = "range_")
 load(":simple.bzl", SimpleParser = "simpleparser")
 
-def _parse_block(self, expr, _fail = fail):
+def _parse_block(self, expr, cls, _fail = fail):
     return SimpleParser.__internal__._parse_block(
         self,
         expr,
+        cls,
         npm_mode = True,
         _fail = _fail,
     )
 
-def _npm_parser_new(_fail = fail):
+def _npm_parser_new(cls_name = Versions.VERSIONS.SEMVER, _fail = fail):
     """
     Constructs a `NpmParser` `struct`.
 
@@ -34,11 +36,22 @@ def _npm_parser_new(_fail = fail):
     [`Spec`]: ../spec.md
 
     Args:
+        cls_name (string): the version class to use (one of
+            [`Versions.VERSIONS`]).
         _fail (function): **[TESTING]** Mock of the `fail()` function.
 
     Returns:
         A `NpmParser` `struct`.
     """
+
+    def _target(**fields):
+        valid_fields = {
+            field: value
+            for field, value in fields.items()
+            if cls.has(field)
+        }
+
+        return cls.new(**valid_fields)
 
     def normalize(expression):
         def normalize_block(block):
@@ -104,7 +117,7 @@ def _npm_parser_new(_fail = fail):
             if HYPHEN in group:
                 subclauses = []
                 for op, block in zip((">=", "<="), group.split(HYPHEN, 2)):
-                    clauses = _parse_block(self, op + block, _fail = _fail)
+                    clauses = _parse_block(self, op + block, cls, _fail = _fail)
 
                     if _fail != fail and type(clauses) == "string":
                         # testing: _fail returned an error string
@@ -114,7 +127,7 @@ def _npm_parser_new(_fail = fail):
             else:
                 blocks = group.split(" ")
                 for block in blocks:
-                    clauses = _parse_block(self, block, _fail = _fail)
+                    clauses = _parse_block(self, block, cls, _fail = _fail)
 
                     if _fail != fail and type(clauses) == "string":
                         # testing: _fail returned an error string
@@ -132,23 +145,25 @@ def _npm_parser_new(_fail = fail):
                     if clause.operator in (Range.OP_GT, Range.OP_GE):
                         r = Range.new(
                             operator = Range.OP_LT,
-                            target = SemVer.new(
+                            target = _target(
                                 major = clause.target.major,
                                 minor = clause.target.minor,
                                 patch = clause.target.patch + 1,
                             ),
+                            cls_name = cls_name,
                             prerelease_policy = Range.PRERELEASE_ALWAYS,
                         )
                         prerelease_clauses.append(r)
                     elif clause.operator in (Range.OP_LT, Range.OP_LE):
                         r = Range.new(
                             operator = Range.OP_GE,
-                            target = SemVer.new(
+                            target = _target(
                                 major = clause.target.major,
                                 minor = clause.target.minor,
                                 patch = 0,
                                 prerelease = (),
                             ),
+                            cls_name = cls_name,
                             prerelease_policy = Range.PRERELEASE_ALWAYS,
                         )
                         prerelease_clauses.append(r)
@@ -172,8 +187,15 @@ def _npm_parser_new(_fail = fail):
         return Range.new(
             operator,
             target,
+            cls_name = cls_name,
             prerelease_policy = Range.PRERELEASE_SAMEPATCH,
         )
+
+    cls = Versions.get_version_class(cls_name, _fail = _fail)
+
+    if _fail != fail and type(cls) == "string":
+        # testing: _fail returned an error string
+        return cls
 
     JOINER = "||"
     HYPHEN = " - "

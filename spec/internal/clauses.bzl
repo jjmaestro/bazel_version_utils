@@ -35,7 +35,7 @@ Each `clause` has the following methods:
 > stable API.
 """
 
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:versions.bzl", Versions = "versions")
 
 def _isinstance(other, __classes__):
     if type(__classes__) not in ("tuple", "list"):
@@ -418,6 +418,7 @@ __CLASS__RANGE = "Range"
 def _range_new(
         operator,
         target,
+        cls_name = Versions.VERSIONS.SEMVER,
         prerelease_policy = None,
         build_policy = None,
         _fail = fail):
@@ -461,7 +462,7 @@ def _range_new(
         return version.lt(self.target)
 
     def match(version):
-        version = SemVer.parse(version)
+        version = cls.parse(version)
 
         if self.build_policy != range_.BUILD_STRICT:
             version = version.truncate("prerelease")
@@ -516,7 +517,13 @@ def _range_new(
             ", %s" % policy_part_str if policy_part_str else "",
         )
 
-    target = SemVer.parse(target)
+    cls = Versions.get_version_class(cls_name, _fail = _fail)
+
+    if _fail != fail and type(cls) == "string":
+        # testing: _fail returned an error string
+        return cls
+
+    target = cls.parse(target)
 
     prerelease_policy = prerelease_policy or range_.PRERELEASE_NATURAL
     build_policy = build_policy or range_.BUILD_IMPLICIT

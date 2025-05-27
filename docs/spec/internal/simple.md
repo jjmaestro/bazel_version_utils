@@ -71,13 +71,14 @@ NPM-style specs:
 
 [PEP 440]: https://peps.python.org/pep-0440/
 [`python-semanticversion`'s `SimpleSpec`]: https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
+[`Versions.VERSIONS`]: ../../../version/versions.bzl
 
 <a id="simpleparser.new"></a>
 
 ## simpleparser.new
 
 <pre>
-simpleparser.new(<a href="#simpleparser.new-_fail">_fail</a>)
+simpleparser.new(<a href="#simpleparser.new-cls_name">cls_name</a>, <a href="#simpleparser.new-_fail">_fail</a>)
 </pre>
 
 Constructs a `NpmParser` `struct`.
@@ -100,6 +101,7 @@ specification with `match(version)`.
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
+| <a id="simpleparser.new-cls_name"></a>cls_name |  the version class to use (one of [`Versions.VERSIONS`]).   |  `"semver"` |
 | <a id="simpleparser.new-_fail"></a>_fail |  **[TESTING]** Mock of the `fail()` function.   |  `<built-in function fail>` |
 
 **RETURNS**
