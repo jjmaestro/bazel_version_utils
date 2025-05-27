@@ -83,13 +83,14 @@ print(v.to_str())
 [`spec/internal/simple`]: docs/spec/internal/simple.md
 [`SYNTAX.SIMPLE`]: internal/simple.md
 [`SYNTAX.NPM`]: internal/npm.md
+[`Version.SCHEME`]: ../../version/version.bzl
 
 <a id="spec.new"></a>
 
 ## spec.new
 
 <pre>
-spec.new(<a href="#spec.new-expression">expression</a>, <a href="#spec.new-syntax">syntax</a>, <a href="#spec.new-_fail">_fail</a>)
+spec.new(<a href="#spec.new-expression">expression</a>, <a href="#spec.new-syntax">syntax</a>, <a href="#spec.new-version_scheme">version_scheme</a>, <a href="#spec.new-_fail">_fail</a>)
 </pre>
 
 Constructs a `Spec` `struct` from the given version requirements specification.
@@ -116,6 +117,7 @@ npm = spec.new(">=0.1.0 <0.3.0", syntax = spec.SYNTAX.NPM)
 | :------------- | :------------- | :------------- |
 | <a id="spec.new-expression"></a>expression |  The version requirements specification string.   |  none |
 | <a id="spec.new-syntax"></a>syntax |  The `SYNTAX` of the specification. One of [`SYNTAX.SIMPLE`] (e.g. `>=0.1.1,<0.3.0`) or [`SYNTAX.NPM`] (e.g. `>=0.1.1 <0.1.3 \|\| 2.x`). Defaults to `SYNTAX.SIMPLE`.   |  `"simple"` |
+| <a id="spec.new-version_scheme"></a>version_scheme |  the version scheme to use (one of [`Version.SCHEME`]).   |  `"semver"` |
 | <a id="spec.new-_fail"></a>_fail |  **[TESTING]** Mock of the `fail()` function.   |  `<built-in function fail>` |
 
 **RETURNS**

@@ -82,19 +82,24 @@ print(v.to_str())
 [`spec/internal/simple`]: docs/spec/internal/simple.md
 [`SYNTAX.SIMPLE`]: internal/simple.md
 [`SYNTAX.NPM`]: internal/npm.md
+[`Version.SCHEME`]: ../../version/version.bzl
 """
 
 load("//spec/internal:npm.bzl", NPMParser = "npmparser")
 load("//spec/internal:simple.bzl", SimpleParser = "simpleparser")
 load("//spec/internal:utils.bzl", "isinstance")
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:version.bzl", Version = "version")
 
 SYNTAX = struct(
     SIMPLE = "simple",
     NPM = "npm",
 )
 
-def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
+def _new(
+        expression,
+        syntax = SYNTAX.SIMPLE,
+        version_scheme = Version.SCHEME.SEMVER,
+        _fail = fail):
     """
     Constructs a `Spec` `struct` from the given version requirements specification.
 
@@ -117,6 +122,8 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
         syntax (SYNTAX): The `SYNTAX` of the specification. One of
             [`SYNTAX.SIMPLE`] (e.g. `>=0.1.1,<0.3.0`) or [`SYNTAX.NPM`] (e.g.
             `>=0.1.1 <0.1.3 || 2.x`). Defaults to `SYNTAX.SIMPLE`.
+        version_scheme (string): the version scheme to use (one of
+            [`Version.SCHEME`]).
         _fail (function): **[TESTING]** Mock of the `fail()` function.
 
     Returns:
@@ -134,7 +141,7 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
         Filters the versions in the iterable of versions that match the spec.
         """
         return [
-            SemVer.parse(version)
+            VersionScheme.parse(version)
             for version in versions
             if _match(version)
         ]
@@ -167,10 +174,17 @@ def _new(expression, syntax = SYNTAX.SIMPLE, _fail = fail):
     def _repr():
         return "<%s:%s %r>" % (self.__class__, self.syntax.upper(), self.expression)
 
+    # buildifier: disable=name-conventions
+    VersionScheme = Version.new(version_scheme, _fail = _fail)
+
+    if _fail != fail and type(VersionScheme) == "string":
+        # testing: _fail returned an error string
+        return VersionScheme
+
     if syntax == SYNTAX.SIMPLE:
-        parser = SimpleParser.new(_fail = _fail)
+        parser = SimpleParser.new(version_scheme, _fail = _fail)
     elif syntax == SYNTAX.NPM:
-        parser = NPMParser.new(_fail = _fail)
+        parser = NPMParser.new(version_scheme, _fail = _fail)
     else:
         return _fail("Unknown syntax: %s" % syntax)
 

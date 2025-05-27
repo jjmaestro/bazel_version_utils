@@ -6,7 +6,7 @@ See [`docs/spec/internal/clauses`]
 [`docs/spec/internal/clauses`]: ../../docs/spec/internal/clauses.md
 """
 
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:version.bzl", Version = "version")
 load(":utils.bzl", "isinstance")
 
 # Clause
@@ -379,6 +379,7 @@ __CLASS__RANGE = "Range"
 def _range_new(
         operator,
         target,
+        version_scheme = Version.SCHEME.SEMVER,
         prerelease_policy = None,
         build_policy = None,
         _fail = fail):
@@ -422,7 +423,7 @@ def _range_new(
         return version.lt(self.target)
 
     def match(version):
-        version = SemVer.parse(version)
+        version = VersionScheme.parse(version)
 
         if self.build_policy != BUILD.STRICT:
             version = version.truncate("prerelease")
@@ -477,7 +478,14 @@ def _range_new(
             ", %s" % policy_part_str if policy_part_str else "",
         )
 
-    target = SemVer.parse(target)
+    # buildifier: disable=name-conventions
+    VersionScheme = Version.new(version_scheme, _fail = _fail)
+
+    if _fail != fail and type(VersionScheme) == "string":
+        # testing: _fail returned an error string
+        return VersionScheme
+
+    target = VersionScheme.parse(target)
 
     prerelease_policy = prerelease_policy or PRERELEASE.NATURAL
     build_policy = build_policy or BUILD.IMPLICIT

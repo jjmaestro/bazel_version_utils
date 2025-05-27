@@ -4,21 +4,23 @@
 See [`docs/spec/internal/npm`]
 
 [`docs/spec/internal/npm`]: ../../docs/spec/internal/npm.md
+[`Version.SCHEME`]: ../../../version/version.bzl
 """
 
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:version.bzl", Version = "version")
 load(":clauses.bzl", AllOf = "allof", Never = "never", Range = "range_")
 load(":simple.bzl", SimpleParser = "simpleparser")
 
-def _parse_block(self, expr, _fail = fail):
+def _parse_block(self, expr, VersionScheme, _fail = fail):
     return SimpleParser.__internal__._parse_block(
         self,
         expr,
+        VersionScheme,
         npm_mode = True,
         _fail = _fail,
     )
 
-def _npm_parser_new(_fail = fail):
+def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
     """
     Constructs a `NpmParser` `struct`.
 
@@ -34,11 +36,22 @@ def _npm_parser_new(_fail = fail):
     [`Spec`]: ../spec.md
 
     Args:
+        version_scheme (string): the version scheme to use (one of
+            [`Version.SCHEME`]).
         _fail (function): **[TESTING]** Mock of the `fail()` function.
 
     Returns:
         A `NpmParser` `struct`.
     """
+
+    def _target(**fields):
+        valid_fields = {
+            field: value
+            for field, value in fields.items()
+            if VersionScheme.has(field)
+        }
+
+        return VersionScheme.new(**valid_fields)
 
     def normalize(expression):
         def normalize_block(block):
@@ -111,7 +124,7 @@ def _npm_parser_new(_fail = fail):
 
             subclauses = []
             for block in blocks:
-                clauses = _parse_block(self, block, _fail = _fail)
+                clauses = _parse_block(self, block, VersionScheme, _fail = _fail)
 
                 if _fail != fail and type(clauses) == "string":
                     # testing: _fail returned an error string
@@ -129,23 +142,25 @@ def _npm_parser_new(_fail = fail):
                     if clause.operator in (Range.OP.GT, Range.OP.GE):
                         r = Range.new(
                             operator = Range.OP.LT,
-                            target = SemVer.new(
+                            target = _target(
                                 major = clause.target.major,
                                 minor = clause.target.minor,
                                 patch = clause.target.patch + 1,
                             ),
+                            version_scheme = version_scheme,
                             prerelease_policy = Range.PRERELEASE.ALWAYS,
                         )
                         prerelease_clauses.append(r)
                     elif clause.operator in (Range.OP.LT, Range.OP.LE):
                         r = Range.new(
                             operator = Range.OP.GE,
-                            target = SemVer.new(
+                            target = _target(
                                 major = clause.target.major,
                                 minor = clause.target.minor,
                                 patch = 0,
                                 prerelease = (),
                             ),
+                            version_scheme = version_scheme,
                             prerelease_policy = Range.PRERELEASE.ALWAYS,
                         )
                         prerelease_clauses.append(r)
@@ -169,8 +184,16 @@ def _npm_parser_new(_fail = fail):
         return Range.new(
             operator,
             target,
+            version_scheme = version_scheme,
             prerelease_policy = Range.PRERELEASE.SAMEPATCH,
         )
+
+    # buildifier: disable=name-conventions
+    VersionScheme = Version.new(version_scheme, _fail = _fail)
+
+    if _fail != fail and type(VersionScheme) == "string":
+        # testing: _fail returned an error string
+        return VersionScheme
 
     JOINER = "||"
     HYPHEN = " - "

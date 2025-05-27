@@ -4,9 +4,10 @@
 See [`docs/spec/internal/simple`]
 
 [`docs/spec/internal/simple`]: ../../docs/spec/internal/simple.md
+[`Version.SCHEME`]: ../../../version/version.bzl
 """
 
-load("//version:semver.bzl", SemVer = "semver")
+load("//version:version.bzl", Version = "version")
 load(":clauses.bzl", Always = "always", Range = "range_")
 
 def _make_operators(operators, op_aliases = None):
@@ -57,7 +58,16 @@ def _has_op_with_spaces(block, ops):
 
     return False
 
-def _parse_block(self, expression, npm_mode = False, _fail = fail):
+def _parse_block(self, expression, VersionScheme, npm_mode = False, _fail = fail):
+    def _target(**fields):
+        valid_fields = {
+            field: value
+            for field, value in fields.items()
+            if VersionScheme.has(field)
+        }
+
+        return VersionScheme.new(**valid_fields)
+
     if not expression:
         return _fail("Empty spec")
 
@@ -86,7 +96,7 @@ def _parse_block(self, expression, npm_mode = False, _fail = fail):
 
     op = self.OP_ALIASES.get(op, op)
 
-    parts = SemVer.parse_spec(version, wildcards, _fail = _fail)
+    parts = VersionScheme.parse_spec(version, wildcards, _fail = _fail)
 
     if _fail != fail and type(parts) == "string":
         # testing: _fail returned an error string
@@ -98,13 +108,13 @@ def _parse_block(self, expression, npm_mode = False, _fail = fail):
         if op not in (self.OP.EQ, self.OP.GE):
             return _fail("Invalid spec expression: %r" % expression)
 
-        target = SemVer.new(major = 0, minor = 0, patch = 0)
+        target = _target(major = 0, minor = 0, patch = 0)
     elif minor == None:
-        target = SemVer.new(major = major, minor = 0, patch = 0)
+        target = _target(major = major, minor = 0, patch = 0)
     elif patch == None:
-        target = SemVer.new(major = major, minor = minor, patch = 0)
+        target = _target(major = major, minor = minor, patch = 0)
     else:
-        target = SemVer.new(
+        target = _target(
             major = major,
             minor = minor,
             patch = patch,
@@ -287,7 +297,7 @@ def _parse_block(self, expression, npm_mode = False, _fail = fail):
     else:
         return fail("Should never execute this statement")
 
-def _simple_parser_new(_fail = fail):
+def _simple_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
     """
     Constructs a `NpmParser` `struct`.
 
@@ -304,6 +314,8 @@ def _simple_parser_new(_fail = fail):
     [`Spec`]: ../spec.md
 
     Args:
+        version_scheme (string): the version scheme to use (one of
+            [`Version.SCHEME`]).
         _fail (function): **[TESTING]** Mock of the `fail()` function.
 
     Returns:
@@ -336,7 +348,7 @@ def _simple_parser_new(_fail = fail):
         clause = Always.new()
 
         for block in expression.split(JOINER):
-            clauses = _parse_block(self, block, _fail = _fail)
+            clauses = _parse_block(self, block, VersionScheme, _fail = _fail)
 
             if _fail != fail and type(clauses) == "string":
                 # testing: _fail returned an error string
@@ -353,6 +365,21 @@ def _simple_parser_new(_fail = fail):
 
         return clause
 
+    def _range(operator, target, **kwargs):
+        return Range.new(
+            operator,
+            target,
+            version_scheme = version_scheme,
+            **kwargs
+        )
+
+    # buildifier: disable=name-conventions
+    VersionScheme = Version.new(version_scheme, _fail = _fail)
+
+    if _fail != fail and type(VersionScheme) == "string":
+        # testing: _fail returned an error string
+        return VersionScheme
+
     JOINER = ","
 
     self = struct(
@@ -362,7 +389,7 @@ def _simple_parser_new(_fail = fail):
         OPERATORS = _make_operators(_OP, OP_ALIASES),
         parse = parse,
         normalize = normalize,
-        _range = Range.new,
+        _range = _range,
     )
 
     return self

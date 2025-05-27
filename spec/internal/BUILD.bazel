@@ -22,7 +22,7 @@ bzl_library(
     srcs = ["clauses.bzl"],
     deps = [
         ":utils",
-        "//version:semver",
+        "//version",
     ],
 )
 
@@ -31,7 +31,7 @@ bzl_library(
     srcs = ["simple.bzl"],
     deps = [
         ":clauses",
-        "//version:semver",
+        "//version",
     ],
 )
 
@@ -41,6 +41,6 @@ bzl_library(
     deps = [
         ":clauses",
         ":simple",
-        "//version:semver",
+        "//version",
     ],
 )
