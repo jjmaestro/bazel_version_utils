@@ -168,9 +168,14 @@ def _npm_parser_new(cls_name = Versions.VERSIONS.SEMVER, _fail = fail):
                         )
                         prerelease_clauses.append(r)
 
+                    if clause.target.has("patch"):
+                        target_truncated = clause.target.truncate("patch")
+                    else:
+                        target_truncated = clause.target.truncate("minor")
+
                     r = self._range(
                         operator = clause.operator,
-                        target = clause.target.truncate("patch"),
+                        target = target_truncated,
                     )
                     non_prerel_clauses.append(r)
                 else:

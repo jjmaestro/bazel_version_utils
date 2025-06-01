@@ -35,6 +35,7 @@ bzl_library(
     name = "versions",
     srcs = ["versions.bzl"],
     deps = [
+        ":pgver",
         ":semver",
     ],
 )
