@@ -132,21 +132,29 @@ def _parse_block(self, expression, VersionScheme, npm_mode = False, _fail = fail
         lambda v: fail("v == None and it shouldn't be") if v == None else None
 
     if op == self.OP.CARET and npm_mode:
+        if target.has("patch"):
+            target_truncated = target.truncate("patch")
+        else:
+            target_truncated = target.truncate("minor")
+
         if target.major:
             # ^1.2.4 => >=1.2.4 <2.0.0 ; ^1.x => >=1.0.0 <2.0.0
-            high = target.truncate("patch").bump("major")
+            high = target_truncated.bump("major")
         elif target.minor:
             # ^0.1.2 => >=0.1.2 <0.2.0
-            high = target.truncate("patch").bump("minor")
+            high = target_truncated.bump("minor")
         elif minor == None:
             # ^0.x => >=0.0.0 <1.0.0
-            high = target.truncate("patch").bump("major")
+            high = target_truncated.bump("major")
         elif patch == None:
             # ^0.2.x => >=0.2.0 <0.3.0
-            high = target.truncate("patch").bump("minor")
+            high = target_truncated.bump("minor")
         else:
-            # ^0.0.1 => >=0.0.1 <0.0.2
-            high = target.truncate("patch").bump("patch")
+            # ^0.0.1 => >=0.0.1 <0.0.2 / ^16.1 => >=16.1 <16.2
+            if target.has("patch"):
+                high = target_truncated.bump("patch")
+            else:
+                high = target_truncated.bump("minor")
 
         return [
             self._range(Range.OP.GE, target),

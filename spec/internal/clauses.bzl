@@ -384,6 +384,9 @@ def _range_new(
         build_policy = None,
         _fail = fail):
     def _same_at(v1, v2, level):
+        if not (v1.has(level) or v2.has(level)):
+            return True
+
         return v1.truncate(level).eq(v2.truncate(level))
 
     def _match_eq(version):

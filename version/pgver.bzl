@@ -491,9 +491,50 @@ def _has(field):
     """
     return field in _FIELDS
 
+def _parse_spec(version, wildcards, _fail = fail):
+    if version[-1] in ("-", "+"):
+        version = version[:-1]
+
+    parts = _parse_re(version, _fail = _fail)
+
+    if _fail != fail and type(parts) == "string":
+        # testing: _fail returned an error string
+        return parts
+
+    major, minor, prerelease, build = parts
+
+    empty_values = wildcards + [None]
+
+    parts = _validate(
+        major,
+        minor,
+        prerelease,
+        build,
+        wildcards = empty_values,
+        allow_empty = True,
+        _fail = _fail,
+    )
+
+    if _fail != fail and type(parts) == "string":
+        # testing: _fail returned an error string
+        return parts
+
+    major, minor, prerelease, build, _ = parts
+
+    major = None if major in empty_values else major
+    minor = None if minor in empty_values else minor
+
+    if prerelease and all([p == None for p in (major, minor)]):
+        return _fail("Invalid version in spec expression: %r" % version)
+
+    patch = 0
+
+    return major, minor, patch, prerelease, build
+
 pgver = struct(
     new = _new,
     parse = _parse,
+    parse_spec = _parse_spec,
     compare = _compare,
     sorted = _sorted,
     is_ = _is,

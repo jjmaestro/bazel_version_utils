@@ -268,6 +268,26 @@ Parses a Postgres version string into a `PgVer` `struct`.
 A `PgVer` `struct`.
 
 
+<a id="pgver.parse_spec"></a>
+
+## pgver.parse_spec
+
+<pre>
+pgver.parse_spec(<a href="#pgver.parse_spec-version">version</a>, <a href="#pgver.parse_spec-wildcards">wildcards</a>, <a href="#pgver.parse_spec-_fail">_fail</a>)
+</pre>
+
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="pgver.parse_spec-version"></a>version |  <p align="center"> - </p>   |  none |
+| <a id="pgver.parse_spec-wildcards"></a>wildcards |  <p align="center"> - </p>   |  none |
+| <a id="pgver.parse_spec-_fail"></a>_fail |  <p align="center"> - </p>   |  `<built-in function fail>` |
+
+
 <a id="pgver.sorted"></a>
 
 ## pgver.sorted

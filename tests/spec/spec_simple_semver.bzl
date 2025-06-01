@@ -407,7 +407,7 @@ def _build_check_impl(ctx):
 
 build_check_test = unittest.make(_build_check_impl)
 
-TEST_SUITE_NAME = "spec_simple"
+TEST_SUITE_NAME = "spec_simple/semver"
 
 TEST_SUITE_TESTS = dict(
     invalid_spec = invalid_spec_test,
