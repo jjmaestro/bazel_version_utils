@@ -6,6 +6,7 @@ Mirrors python-semanticversion/tests/test_npm.py
 
 load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
 load("//spec:spec.bzl", Spec = "spec")
+load("//tests:mock.bzl", Mock = "mock")
 load("//tests:suite.bzl", _test_suite = "test_suite")
 
 def _spec_impl(ctx):
@@ -74,12 +75,20 @@ def _expand_impl(ctx):
 
         # X-Ranges
         ("*", ">=0.0.0"),
+        (">=*", ">=0.0.0"),
         ("1.x", ">=1.0.0 <2.0.0"),
         ("1.2.x", ">=1.2.0 <1.3.0"),
         ("", "*"),
+        ("x", "*"),
         ("1", "1.x.x"),
         ("1.x.x", ">=1.0.0 <2.0.0"),
         ("1.2", "1.2.x"),
+
+        # Partial GT LT Ranges
+        (">=1", ">=1.0.0"),
+        (">1", ">=2.0.0"),
+        (">1.2", ">=1.3.0"),
+        ("<1", "<1.0.0"),
 
         # Tilde ranges
         ("~1.2.3", ">=1.2.3 <1.3.0"),
@@ -101,6 +110,7 @@ def _expand_impl(ctx):
         ("^0.0", ">=0.0.0 <0.1.0"),
         ("^1.x", ">=1.0.0 <2.0.0"),
         ("^0.x", ">=0.0.0 <1.0.0"),
+        ("^0", ">=0.0.0 <1.0.0"),
     ])
 
     # With whitespace
@@ -136,6 +146,42 @@ def _expand_impl(ctx):
 
 expand_test = unittest.make(_expand_impl)
 
+def _invalid_spec_impl(ctx):
+    def is_error(res):
+        errors = (
+            "Empty version string",
+            "Can't find a valid spec operator",
+            "Invalid spec expression",
+            "Invalid semantic version",
+        )
+
+        for error in errors:
+            if res.startswith(error):
+                return True
+        return False
+
+    env = unittest.begin(ctx)
+
+    invalid_specs = [
+        "==0.1.2",
+        ">>0.1.2",
+        "> = 0.1.2",
+        "<=>0.1.2",
+        "~1.2.3beta",
+        "~=1.2.3",
+        ">01.02.03",
+        "!0.1.2",
+        "!=0.1.2",
+    ]
+
+    for expression in invalid_specs:
+        res = Spec.new(expression, syntax = Spec.SYNTAX.NPM, _fail = Mock.fail)
+        asserts.true(env, is_error(res))
+
+    return unittest.end(env)
+
+invalid_spec_test = unittest.make(_invalid_spec_impl)
+
 def _simplify_impl(ctx):
     env = unittest.begin(ctx)
 
@@ -156,12 +202,42 @@ def _simplify_impl(ctx):
 
 simplify_test = unittest.make(_simplify_impl)
 
+def _equivalent_impl(ctx):
+    """
+    Like _expand_impl, but simplifying both sides
+
+    NOTE:
+    Some specs can be equivalent but don't currently simplify to the same
+    clauses.
+    """
+
+    env = unittest.begin(ctx)
+
+    expansions = dict([
+        ("||", "*"),
+    ])
+
+    for left, right in expansions.items():
+        s1 = Spec.new(left, syntax = Spec.SYNTAX.NPM)
+        s2 = Spec.new(right, syntax = Spec.SYNTAX.NPM)
+
+        ss1 = s1.clause.simplify()
+        ss2 = s2.clause.simplify()
+
+        asserts.true(env, ss1.eq(ss2))
+
+    return unittest.end(env)
+
+equivalent_test = unittest.make(_equivalent_impl)
+
 TEST_SUITE_NAME = "spec_npm"
 
 TEST_SUITE_TESTS = dict(
     spec = spec_test,
+    invalid_spec = invalid_spec_test,
     expand = expand_test,
     simplify = simplify_test,
+    equivalent = equivalent_test,
 )
 
 test_suite = lambda: _test_suite(TEST_SUITE_NAME, TEST_SUITE_TESTS)
