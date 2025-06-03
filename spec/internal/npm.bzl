@@ -165,23 +165,25 @@ def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
                         )
                         prerelease_clauses.append(r)
 
-                    if clause.target.has("patch"):
-                        target_truncated = clause.target.truncate("patch")
-                    else:
-                        target_truncated = clause.target.truncate("minor")
+                    if not clause.operator in (Range.OP.LT, Range.OP.LE):
+                        if clause.target.has("patch"):
+                            target_truncated = clause.target.truncate("patch")
+                        else:
+                            target_truncated = clause.target.truncate("minor")
 
-                    r = self._range(
-                        operator = clause.operator,
-                        target = target_truncated,
-                    )
-                    non_prerel_clauses.append(r)
+                        r = self._range(
+                            operator = clause.operator,
+                            target = target_truncated,
+                        )
+                        non_prerel_clauses.append(r)
                 else:
                     non_prerel_clauses.append(clause)
 
             if prerelease_clauses:
                 result = result.or_(AllOf.new(*prerelease_clauses))
 
-            result = result.or_(AllOf.new(*non_prerel_clauses))
+            if non_prerel_clauses:
+                result = result.or_(AllOf.new(*non_prerel_clauses))
 
         return result
 
