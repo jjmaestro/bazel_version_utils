@@ -231,14 +231,6 @@ OP_ALIASES = {"": "=", "~>": "~"}
 
 npmparser = struct(
     new = _npm_parser_new,
-    OPS = struct(
-        LT = "<",
-        LE = "<=",
-        GE = ">=",
-        GT = ">",
-        EQ = "=",
-        TILDE = "~",
-        CARET = "^",
-    ),
-    OP_ALIASES = {"": "="},
+    OPS = struct(**OPS),
+    OP_ALIASES = OP_ALIASES,
 )
