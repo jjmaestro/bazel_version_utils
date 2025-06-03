@@ -226,7 +226,7 @@ _OP = dict(
 )
 OP = struct(**_OP)
 
-OP_ALIASES = {"": "="}
+OP_ALIASES = {"": "=", "~>": "~"}
 
 npmparser = struct(
     new = _npm_parser_new,
