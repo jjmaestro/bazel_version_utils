@@ -1,7 +1,10 @@
+load(":npm_server.bzl", npm_server_test_suite = "test_suite")
 load(":spec.bzl", spec_test_suite = "test_suite")
 load(":spec_npm.bzl", spec_npm_test_suite = "test_suite")
 load(":spec_simple_pgver.bzl", spec_simple_pgver_test_suite = "test_suite")
 load(":spec_simple_semver.bzl", spec_simple_semver_test_suite = "test_suite")
+
+npm_server_test_suite()
 
 spec_test_suite()
 
