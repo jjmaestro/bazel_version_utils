@@ -390,12 +390,19 @@ def _range_new(
         return v1.truncate(level).eq(v2.truncate(level))
 
     def _match_eq(version):
+        if self.target.prerelease and not version.prerelease:
+            return False
+
         if self.build_policy == BUILD.STRICT:
             return (
                 _same_at(self.target, version, "prerelease") and
                 version.build == self.target.build
             )
-        return version.eq(self.target)
+
+        version_truncated = version.truncate("prerelease")
+        target_truncated = self.target.truncate("prerelease")
+
+        return version_truncated.eq(target_truncated)
 
     def _match_ne(version):
         if self.build_policy == BUILD.STRICT:
@@ -412,7 +419,10 @@ def _range_new(
         ):
             return False
 
-        return version.ne(self.target)
+        version_truncated = version.truncate("prerelease")
+        target_truncated = self.target.truncate("prerelease")
+
+        return version_truncated.ne(target_truncated)
 
     def _match_lt(version):
         if (

@@ -139,7 +139,7 @@ def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
                 if clause.target.prerelease:
                     prerelease_clauses.append(clause)
 
-                    if clause.operator in (Range.OP.GT, Range.OP.GE):
+                    if clause.operator == Range.OP.GE:
                         r = Range.new(
                             operator = Range.OP.LT,
                             target = _target(
@@ -151,7 +151,7 @@ def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
                             prerelease_policy = Range.PRERELEASE.ALWAYS,
                         )
                         prerelease_clauses.append(r)
-                    elif clause.operator in (Range.OP.LT, Range.OP.LE):
+                    elif clause.operator == Range.OP.LE:
                         r = Range.new(
                             operator = Range.OP.GE,
                             target = _target(
@@ -165,7 +165,7 @@ def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
                         )
                         prerelease_clauses.append(r)
 
-                    if not clause.operator in (Range.OP.LT, Range.OP.LE):
+                    if not clause.operator in (Range.OP.LT, Range.OP.LE, Range.OP.EQ):
                         if clause.target.has("patch"):
                             target_truncated = clause.target.truncate("patch")
                         else:
