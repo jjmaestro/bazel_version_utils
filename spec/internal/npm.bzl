@@ -190,13 +190,17 @@ def _npm_parser_new(cls_name = Versions.VERSIONS.SEMVER, _fail = fail):
 
         return result
 
-    def _range(operator, target):
-        return Range.new(
-            operator,
-            target,
+    def _range(operator, target, build_policy = None):
+        kwargs = dict(
             cls_name = cls_name,
             prerelease_policy = Range.PRERELEASE_SAMEPATCH,
+            npm_mode = True,
         )
+
+        if build_policy != None:
+            kwargs["build_policy"] = build_policy
+
+        return Range.new(operator, target, **kwargs)
 
     cls = Versions.get_version_class(cls_name, _fail = _fail)
 

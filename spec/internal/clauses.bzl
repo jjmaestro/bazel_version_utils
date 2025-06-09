@@ -421,6 +421,7 @@ def _range_new(
         cls_name = Versions.VERSIONS.SEMVER,
         prerelease_policy = None,
         build_policy = None,
+        npm_mode = False,
         _fail = fail):
     def _same_at(v1, v2, level):
         if not (v1.has(level) or v2.has(level)):
@@ -539,12 +540,11 @@ def _range_new(
     target = cls.parse(target)
 
     prerelease_policy = prerelease_policy or range_.PRERELEASE_NATURAL
-    build_policy = build_policy or range_.BUILD_IMPLICIT
 
-    if target.build:
-        build_policy = range_.BUILD_STRICT
+    if build_policy == None:
+        build_policy = range_.BUILD_STRICT if target.build else range_.BUILD_IMPLICIT
 
-    if target.build and operator not in (range_.OP_EQ, range_.OP_NE):
+    if target.build and operator not in (range_.OP_EQ, range_.OP_NE) and not npm_mode:
         msg = "Invalid range '%s%s': build numbers have no ordering."
         return _fail(msg % (operator, target.to_str()))
 

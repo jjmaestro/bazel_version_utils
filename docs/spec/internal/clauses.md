@@ -189,7 +189,7 @@ clauses.Never.new(<a href="#clauses.Never.new-_fail">_fail</a>)
 ## clauses.Range.new
 
 <pre>
-clauses.Range.new(<a href="#clauses.Range.new-operator">operator</a>, <a href="#clauses.Range.new-target">target</a>, <a href="#clauses.Range.new-cls_name">cls_name</a>, <a href="#clauses.Range.new-prerelease_policy">prerelease_policy</a>, <a href="#clauses.Range.new-build_policy">build_policy</a>, <a href="#clauses.Range.new-_fail">_fail</a>)
+clauses.Range.new(<a href="#clauses.Range.new-operator">operator</a>, <a href="#clauses.Range.new-target">target</a>, <a href="#clauses.Range.new-cls_name">cls_name</a>, <a href="#clauses.Range.new-prerelease_policy">prerelease_policy</a>, <a href="#clauses.Range.new-build_policy">build_policy</a>, <a href="#clauses.Range.new-npm_mode">npm_mode</a>, <a href="#clauses.Range.new-_fail">_fail</a>)
 </pre>
 
 
@@ -204,6 +204,7 @@ clauses.Range.new(<a href="#clauses.Range.new-operator">operator</a>, <a href="#
 | <a id="clauses.Range.new-cls_name"></a>cls_name |  <p align="center"> - </p>   |  `"semver"` |
 | <a id="clauses.Range.new-prerelease_policy"></a>prerelease_policy |  <p align="center"> - </p>   |  `None` |
 | <a id="clauses.Range.new-build_policy"></a>build_policy |  <p align="center"> - </p>   |  `None` |
+| <a id="clauses.Range.new-npm_mode"></a>npm_mode |  <p align="center"> - </p>   |  `False` |
 | <a id="clauses.Range.new-_fail"></a>_fail |  <p align="center"> - </p>   |  `<built-in function fail>` |
 
 
@@ -268,7 +269,7 @@ never.new(<a href="#never.new-_fail">_fail</a>)
 ## range_.new
 
 <pre>
-range_.new(<a href="#range_.new-operator">operator</a>, <a href="#range_.new-target">target</a>, <a href="#range_.new-cls_name">cls_name</a>, <a href="#range_.new-prerelease_policy">prerelease_policy</a>, <a href="#range_.new-build_policy">build_policy</a>, <a href="#range_.new-_fail">_fail</a>)
+range_.new(<a href="#range_.new-operator">operator</a>, <a href="#range_.new-target">target</a>, <a href="#range_.new-cls_name">cls_name</a>, <a href="#range_.new-prerelease_policy">prerelease_policy</a>, <a href="#range_.new-build_policy">build_policy</a>, <a href="#range_.new-npm_mode">npm_mode</a>, <a href="#range_.new-_fail">_fail</a>)
 </pre>
 
 
@@ -283,6 +284,7 @@ range_.new(<a href="#range_.new-operator">operator</a>, <a href="#range_.new-tar
 | <a id="range_.new-cls_name"></a>cls_name |  <p align="center"> - </p>   |  `"semver"` |
 | <a id="range_.new-prerelease_policy"></a>prerelease_policy |  <p align="center"> - </p>   |  `None` |
 | <a id="range_.new-build_policy"></a>build_policy |  <p align="center"> - </p>   |  `None` |
+| <a id="range_.new-npm_mode"></a>npm_mode |  <p align="center"> - </p>   |  `False` |
 | <a id="range_.new-_fail"></a>_fail |  <p align="center"> - </p>   |  `<built-in function fail>` |
 
 
