@@ -206,6 +206,8 @@ def _parse_block(self, expression, VersionScheme, npm_mode = False, _fail = fail
             return [
                 self._range(Range.OP.EQ, target, build_policy = Range.BUILD.STRICT),
             ]
+        elif npm_mode:
+            return [self._range(Range.OP.EQ, target, build_policy = Range.BUILD.IMPLICIT)]
         else:
             return [self._range(Range.OP.EQ, target)]
 

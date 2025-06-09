@@ -187,13 +187,17 @@ def _npm_parser_new(version_scheme = Version.SCHEME.SEMVER, _fail = fail):
 
         return result
 
-    def _range(operator, target):
-        return Range.new(
-            operator,
-            target,
+    def _range(operator, target, build_policy = None):
+        kwargs = dict(
             version_scheme = version_scheme,
             prerelease_policy = Range.PRERELEASE.SAMEPATCH,
+            npm_mode = True,
         )
+
+        if build_policy != None:
+            kwargs["build_policy"] = build_policy
+
+        return Range.new(operator, target, **kwargs)
 
     # buildifier: disable=name-conventions
     VersionScheme = Version.new(version_scheme, _fail = _fail)

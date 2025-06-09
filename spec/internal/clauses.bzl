@@ -382,6 +382,7 @@ def _range_new(
         version_scheme = Version.SCHEME.SEMVER,
         prerelease_policy = None,
         build_policy = None,
+        npm_mode = False,
         _fail = fail):
     def _same_at(v1, v2, level):
         if not (v1.has(level) or v2.has(level)):
@@ -501,12 +502,11 @@ def _range_new(
     target = VersionScheme.parse(target)
 
     prerelease_policy = prerelease_policy or PRERELEASE.NATURAL
-    build_policy = build_policy or BUILD.IMPLICIT
 
-    if target.build:
-        build_policy = BUILD.STRICT
+    if build_policy == None:
+        build_policy = BUILD.STRICT if target.build else BUILD.IMPLICIT
 
-    if target.build and operator not in (OP.EQ, OP.NE):
+    if target.build and operator not in (OP.EQ, OP.NE) and not npm_mode:
         msg = "Invalid range '%s%s': build numbers have no ordering."
         return _fail(msg % (operator, target.to_str()))
 
