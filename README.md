@@ -14,6 +14,31 @@ semantic version requirement specifications such as [NPM-style `node-semver`
 Ideally, it will eventually expand to support additional versions (e.g. [Debian
 versions] and [Debian version requirements].
 
+## 📦 Installation
+
+Get the latest tagged or released `<VERSION>` from the ["Releases"] or ["Tags"]
+pages and add the following to `MODULE.bazel`:
+
+```starlark
+bazel_dep(name = "version_utils", version = "<VERSION>")
+```
+
+This module is not yet published in a registry, so it needs an override in
+`MODULE.bazel`, e.g. [`archive_override`]:
+
+```starlark
+VERSION_UTILS_TAG = "0.1.0"
+VERSION_UTILS_TAG_INTEGRITY = "sha256-iPyWbQtnGYPGf0x+U5PQniKqEXtnlMJ/PdPXGbNSseM="
+VERSION_UTILS_URL = "https://github.com/jjmaestro/bazel_version_utils/archive/refs/tags/%s.tar.gz"
+
+archive_override(
+    module_name = "version_utils",
+    integrity = VERSION_UTILS_TAG_INTEGRITY,
+    strip_prefix = "bazel_version_utils-%s" % VERSION_UTILS_TAG,
+    urls = [VERSION_UTILS_URL % VERSION_UTILS_TAG],
+)
+```
+
 ## 🚀 Getting Started
 
 ### `version`
@@ -222,8 +247,11 @@ and thanks to its original author, [@rbarrois]!
 [PEP 440]: https://peps.python.org/pep-0440/
 [Postgres versions]: https://www.postgresql.org/support/versioning/
 [PRs]: ../../pulls
+["Releases"]: ../../releases
 [`SYNTAX.NPM`]: docs/spec/internal/npm.md
 [`SYNTAX.SIMPLE`]: docs/spec/internal/simple.md
+["Tags"]: ../../tags
+[`archive_override`]: https://bazel.build/versions/7.1.0/rules/lib/globals/module
 [issues]: ../../issues
 [python-semanticversion]: https://github.com/rbarrois/python-semanticversion
 [@rbarrois]: https://github.com/rbarrois
