@@ -1,3 +1,10 @@
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable MD013 MD033 MD041 -->
+<p style="text-align: left;">
+    <img src="logo.svg" alt="version_utils logo" title="logo" align="left" height="60" />
+</p>
+<!-- markdownlint-restore -->
+
 # `version_utils`
 
 [![pre-commit](
