@@ -8,3 +8,6 @@
 
 # ignore the user's Bazel config
 /.bazelrc.user
+
+# ignore the CI cache dir
+/.cache
