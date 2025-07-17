@@ -10,7 +10,7 @@ on:
         type: string
 jobs:
   publish:
-    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@79e6de0c555784ad44047d0d60eb1d7df799ce8b # v0.2.1
+    uses: bazel-contrib/publish-to-bcr/.github/workflows/publish.yaml@v0.2.2
     permissions:
       contents: write
       id-token: write
