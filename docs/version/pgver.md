@@ -148,6 +148,8 @@ print(truncated.to_str())
 ## pgver.compare
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.compare(<a href="#pgver.compare-v1">v1</a>, <a href="#pgver.compare-v2">v2</a>)
 </pre>
 
@@ -174,6 +176,8 @@ An integer indicating the relative order of `v1` vs `v2`:
 ## pgver.has
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.has(<a href="#pgver.has-field">field</a>)
 </pre>
 
@@ -196,6 +200,8 @@ Checks whether the given field is a valid `PgVer` `struct` field.
 ## pgver.is_
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.is_(<a href="#pgver.is_-value">value</a>)
 </pre>
 
@@ -218,6 +224,8 @@ Checks whether the given value is a `PgVer` `struct`.
 ## pgver.new
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.new(<a href="#pgver.new-major">major</a>, <a href="#pgver.new-minor">minor</a>, <a href="#pgver.new-prerelease">prerelease</a>, <a href="#pgver.new-build">build</a>, <a href="#pgver.new-partial">partial</a>, <a href="#pgver.new-wildcards">wildcards</a>, <a href="#pgver.new-strict">strict</a>, <a href="#pgver.new-_fail">_fail</a>)
 </pre>
 
@@ -247,6 +255,8 @@ A `PgVer` `struct`.
 ## pgver.parse
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.parse(<a href="#pgver.parse-version">version</a>, <a href="#pgver.parse-partial">partial</a>, <a href="#pgver.parse-wildcards">wildcards</a>, <a href="#pgver.parse-strict">strict</a>, <a href="#pgver.parse-_fail">_fail</a>)
 </pre>
 
@@ -273,6 +283,8 @@ A `PgVer` `struct`.
 ## pgver.parse_spec
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.parse_spec(<a href="#pgver.parse_spec-version">version</a>, <a href="#pgver.parse_spec-wildcards">wildcards</a>, <a href="#pgver.parse_spec-_fail">_fail</a>)
 </pre>
 
@@ -293,6 +305,8 @@ pgver.parse_spec(<a href="#pgver.parse_spec-version">version</a>, <a href="#pgve
 ## pgver.sorted
 
 <pre>
+load("@version_utils//version:pgver.bzl", "pgver")
+
 pgver.sorted(<a href="#pgver.sorted-versions">versions</a>, <a href="#pgver.sorted-reverse">reverse</a>)
 </pre>
 

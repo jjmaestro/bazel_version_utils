@@ -17,6 +17,8 @@ Supported version schemes:
 ## version.new
 
 <pre>
+load("@version_utils//version:version.bzl", "version")
+
 version.new(<a href="#version.new-scheme">scheme</a>, <a href="#version.new-_fail">_fail</a>)
 </pre>
 

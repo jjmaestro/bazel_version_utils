@@ -147,6 +147,8 @@ print(truncated.to_str())
 ## semver.compare
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.compare(<a href="#semver.compare-v1">v1</a>, <a href="#semver.compare-v2">v2</a>, <a href="#semver.compare-_parse">_parse</a>)
 </pre>
 
@@ -174,6 +176,8 @@ An integer indicating the relative order of `v1` vs `v2`:
 ## semver.has
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.has(<a href="#semver.has-field">field</a>)
 </pre>
 
@@ -197,6 +201,8 @@ Checks whether the given field is a valid `SemVer` `struct` field.
 ## semver.is_
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.is_(<a href="#semver.is_-value">value</a>)
 </pre>
 
@@ -219,6 +225,8 @@ Checks whether the given value is a `SemVer` `struct`.
 ## semver.new
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.new(<a href="#semver.new-major">major</a>, <a href="#semver.new-minor">minor</a>, <a href="#semver.new-patch">patch</a>, <a href="#semver.new-prerelease">prerelease</a>, <a href="#semver.new-build">build</a>, <a href="#semver.new-partial">partial</a>, <a href="#semver.new-wildcards">wildcards</a>, <a href="#semver.new-_fail">_fail</a>)
 </pre>
 
@@ -248,6 +256,8 @@ A `SemVer` `struct`.
 ## semver.parse
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.parse(<a href="#semver.parse-version">version</a>, <a href="#semver.parse-partial">partial</a>, <a href="#semver.parse-wildcards">wildcards</a>, <a href="#semver.parse-_fail">_fail</a>)
 </pre>
 
@@ -273,6 +283,8 @@ A `SemVer` `struct`.
 ## semver.parse_spec
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.parse_spec(<a href="#semver.parse_spec-version">version</a>, <a href="#semver.parse_spec-wildcards">wildcards</a>, <a href="#semver.parse_spec-_fail">_fail</a>)
 </pre>
 
@@ -293,6 +305,8 @@ semver.parse_spec(<a href="#semver.parse_spec-version">version</a>, <a href="#se
 ## semver.sorted
 
 <pre>
+load("@version_utils//version:semver.bzl", "semver")
+
 semver.sorted(<a href="#semver.sorted-versions">versions</a>, <a href="#semver.sorted-reverse">reverse</a>)
 </pre>
 

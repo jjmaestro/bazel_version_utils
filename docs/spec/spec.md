@@ -90,6 +90,8 @@ print(v.to_str())
 ## spec.new
 
 <pre>
+load("@version_utils//spec:spec.bzl", "spec")
+
 spec.new(<a href="#spec.new-expression">expression</a>, <a href="#spec.new-syntax">syntax</a>, <a href="#spec.new-version_scheme">version_scheme</a>, <a href="#spec.new-_fail">_fail</a>)
 </pre>
 
