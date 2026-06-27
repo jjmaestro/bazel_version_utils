@@ -87,7 +87,7 @@ print(v.to_str())
 
 load("//spec/internal:npm.bzl", NPMParser = "npmparser")
 load("//spec/internal:simple.bzl", SimpleParser = "simpleparser")
-load("//spec/internal:utils.bzl", "isinstance")
+load("//spec/internal:utils.bzl", "is_instance")
 load("//version:version.bzl", Version = "version")
 
 SYNTAX = struct(
@@ -163,7 +163,7 @@ def _new(
         return max_
 
     def _eq(other, _fail = fail):
-        if not isinstance(other, self.__class__):
+        if not is_instance(other, self.__class__):
             return _fail("NotImplemented")
 
         return self.clause.eq(other.clause)

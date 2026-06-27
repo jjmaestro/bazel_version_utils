@@ -1,6 +1,6 @@
 """utils.bzl"""
 
-def isinstance(other, __classes__):
+def is_instance(other, __classes__):
     if type(__classes__) not in ("tuple", "list"):
         __classes__ = [__classes__]
 
